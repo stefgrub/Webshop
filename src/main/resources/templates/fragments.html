@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <script>
+        (function () {
+          try {
+            const KEY='webshop_theme';
+            const saved = localStorage.getItem(KEY);
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = saved || (prefersDark ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.style.colorScheme = theme;
+          } catch(_) {}
+        })();
+    </script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:text="${title}">WebShop</title>
+<link rel="stylesheet" th:href="@{/css/site.css}" />
+<script defer th:src="@{/js/site.js}"></script>
+</head>
+<body>
+<header th:fragment="header">
+<nav class="nav glass">
+<a class="brand" th:href="@{/}">WS⚡Shop</a>
+    <a th:href="@{/admin}">Admin</a>
+<form class="search" th:action="@{/}" method="get">
+<input type="text" name="q" th:value="${q}" placeholder="Suche Produkte…" />
+<button type="submit">Suchen</button>
+</form>
+<div class="nav-right">
+<a th:href="@{/cart}">🛒 <span class="hide-sm">Warenkorb</span></a>
+<button type="button" id="themeToggle" title="Theme umschalten">🌓</button>
+<span th:if="${#authorization.expression('isAuthenticated()')}">
+<span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit" class="btn ghost">Logout</button>
+</form>
+</span>
+<span th:if="${#authorization.expression('!isAuthenticated()')}">
+<a th:href="@{/login}">Login</a>
+<a class="btn" th:href="@{/register}">Registrieren</a>
+</span>
+</div>
+</nav>
+</header>
+<footer th:fragment="footer">
+    <script>
+        (function () {
+          const KEY = 'webshop_theme';
+          function applyTheme(t) {
+            document.documentElement.setAttribute('data-theme', t);
+            document.documentElement.style.colorScheme = t;
+            try { localStorage.setItem(KEY, t); } catch (_) {}
+          }
+          window.toggleTheme = function () {
+            const cur = document.documentElement.getAttribute('data-theme') || 'light';
+            applyTheme(cur === 'dark' ? 'light' : 'dark');
+          };
+          document.addEventListener('DOMContentLoaded', function () {
+            // Variante 1: Button mit id="themeToggle"
+            const btn = document.getElementById('themeToggle');
+            if (btn) btn.addEventListener('click', function (e) { e.preventDefault(); toggleTheme(); });
+
+            // Variante 2: Buttons, die bereits onclick="toggleTheme()" haben – sicherheitshalber „abholen“
+            document.querySelectorAll('[onclick="toggleTheme()"]').forEach(function (el) {
+              el.addEventListener('click', function (e) { /* fallback: DOM handler vorhanden */ });
+            });
+          });
+        })();
+    </script>
+
+    <div class="container footer glass">
+<p>© <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> WS⚡Shop — Made with Spring</p>
+</div>
+</footer>
+</body>
+</html>

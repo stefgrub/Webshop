@@ -1,0 +1,13 @@
+
+<!-- fragments/_layout_instructions.html -->
+<!-- head -->
+<link th:href="@{/css/modern.css}" rel="stylesheet"/>
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer th:src="@{/js/modern.js}"></script>
+
+<!-- header theme toggle example -->
+<button class="btn ghost" onclick="toggleTheme()" aria-label="Theme umschalten">🌓</button>
+
+<!-- end of body -->
+<div th:replace="~{fragments/_toasts :: _}"></div>
+<div th:replace="~{fragments/_cartDrawer :: _}"></div>

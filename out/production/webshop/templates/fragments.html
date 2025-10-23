@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title th:text="${title}">WebShop</title>
+<link rel="stylesheet" th:href="@{/css/site.css}" />
+<script defer th:src="@{/js/site.js}"></script>
+</head>
+<body>
+<header th:fragment="header">
+<nav class="nav glass">
+<a class="brand" th:href="@{/}">WS⚡Shop</a>
+<form class="search" th:action="@{/}" method="get">
+<input type="text" name="q" th:value="${q}" placeholder="Suche Produkte…" />
+<button type="submit">Suchen</button>
+</form>
+<div class="nav-right">
+<a th:href="@{/cart}">🛒 <span class="hide-sm">Warenkorb</span></a>
+<button type="button" id="themeToggle" title="Theme umschalten">🌓</button>
+<span th:if="${#authorization.expression('isAuthenticated()')}">
+<span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
+<form th:action="@{/logout}" method="post" style="display:inline">
+<button type="submit">Logout</button>
+</form>
+<a th:href="@{/admin/products}" class="admin-link" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
+</span>
+<span th:if="${#authorization.expression('!isAuthenticated()')}">
+<a th:href="@{/login}">Login</a>
+<a class="btn" th:href="@{/register}">Registrieren</a>
+</span>
+</div>
+</nav>
+</header>
+<footer th:fragment="footer">
+<div class="container footer glass">
+<p>© <span th:text="${#dates.format(#dates.createNow(),'yyyy')}">2025</span> WS⚡Shop — Made with Spring</p>
+</div>
+</footer>
+</body>
+</html>

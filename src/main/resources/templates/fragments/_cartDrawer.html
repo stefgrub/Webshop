@@ -1,0 +1,40 @@
+
+<!-- fragments/_cartDrawer.html -->
+<div class="drawer" x-bind:class="{'open': $store.cart.open}" @keydown.escape="$store.cart.open=false"
+     xmlns:x-bind="http://www.w3.org/1999/xhtml">
+  <div class="drawer-header">
+    <strong>Warenkorb</strong>
+    <button class="btn ghost" @click="$store.cart.open=false">Schließen</button>
+  </div>
+  <div class="drawer-body">
+    <template x-if="$store.cart.items.length===0">
+      <p class="muted">Dein Warenkorb ist leer.</p>
+    </template>
+    <template x-for="item in $store.cart.items" :key="item.id">
+      <article class="card product fade-in" style="margin-bottom:.75rem">
+        <div style="display:flex; gap:.8rem; align-items:flex-start;">
+          <img :src="item.img" alt="" style="width:72px; height:72px; object-fit:cover;">
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between;">
+              <strong x-text="item.name"></strong>
+              <span x-text="(item.price*item.qty).toFixed(2)+' €'"></span>
+            </div>
+            <div class="muted" style="display:flex; gap:.5rem; align-items:center; margin-top:.3rem;">
+              <button class="btn ghost" @click="item.qty=Math.max(1,item.qty-1)">–</button>
+              <span x-text="item.qty"></span>
+              <button class="btn ghost" @click="item.qty++">+</button>
+              <button class="btn" style="margin-left:auto" @click="$store.cart.remove(item.id)">Entfernen</button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </template>
+  </div>
+  <div class="drawer-footer">
+    <div style="flex:1;">
+      <div class="muted">Zwischensumme</div>
+      <div><strong x-text="$store.cart.total().toFixed(2)+' €'"></strong></div>
+    </div>
+    <button class="btn primary wide">Zur Kasse</button>
+  </div>
+</div>

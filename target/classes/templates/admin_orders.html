@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Admin – Bestellungen')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+    <h1>📦 Bestellungen verwalten</h1>
+    <form class="filter" th:action="@{/admin/orders}" method="get">
+        <label>Status filtern:
+            <select name="status" onchange="this.form.submit()">
+                <option th:selected="${selectedStatus == null or selectedStatus == ''}" value="">Alle</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}"
+                        th:selected="${selectedStatus == s.name()}"></option>
+            </select>
+        </label>
+    </form>
+    <table class="table glass" th:if="${!#lists.isEmpty(orders)}">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Kunde</th>
+            <th>Datum</th>
+            <th>Status</th>
+            <th>Gesamt</th>
+            <th>Aktionen</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="o : ${orders}">
+            <td th:text="${o.id}"></td>
+            <td th:text="${o.fullName}"></td>
+            <td th:text="${#temporals.format(o.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+            <td>
+                <form th:action="@{'/admin/orders/' + ${o.id} + '/status'}" method="post" class="inline">
+                    <select name="status" onchange="this.form.submit()">
+                        <option th:each="s : ${statuses}"
+                                th:value="${s}" th:text="${s}"
+                                th:selected="${o.status == s}"></option>
+                    </select>
+                    <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+                </form>
+            </td>
+            <td th:text="${#numbers.formatDecimal(o.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
+            <td>
+                <a th:href="@{'/admin/orders/' + ${o.id}}" class="btn small">Details</a>
+                <form th:action="@{/admin/orders/cancel/{id}(id=${o.id})}" method="post" th:if="${!o.canceled}">
+                    <input type="hidden" th:if="${_csrf != null}" name="_csrf" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-warning btn-sm">Stornieren</button>
+                </form>
+                <form th:action="@{/admin/orders/delete/{id}(id=${o.id})}" method="post"
+                      onsubmit="return confirm('Diese Bestellung wirklich löschen?');">
+                    <input type="hidden" th:if="${_csrf != null}" name="_csrf" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger btn-sm">Löschen</button>
+                </form>
+                <span th:if="${o.canceled}" class="badge bg-danger">Storniert</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div th:if="${#lists.isEmpty(orders)}" class="muted">Keine Bestellungen vorhanden.</div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+<style>
+    .filter { margin-bottom: 1.5rem; }
+    select { padding: 0.4rem; }
+    .table td, .table th { padding: 0.6rem 0.8rem; }
+    .inline { display: inline; }
+    .btn.small { padding: 0.3rem 0.6rem; font-size: 0.9rem; }
+</style>
+</body>
+</html>

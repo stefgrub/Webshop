@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Bestellung erfolgreich!')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <section class="card glass success">
+        <h1>🎉 Bestellung erfolgreich!</h1>
+        <p>
+            Vielen Dank für deine Bestellung,
+            <strong th:text="${order.fullName}">Kunde</strong>!
+        </p>
+
+        <h2>Bestellübersicht</h2>
+        <table class="order-table">
+            <tr><th>Bestellnummer:</th><td th:text="${order.id}">1</td></tr>
+            <tr><th>Datum:</th><td th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></td></tr>
+            <tr><th>Status:</th>
+                <td><span class="status" th:text="${order.status}">NEW</span></td>
+            </tr>
+        </table>
+
+        <h2>Lieferadresse</h2>
+        <address>
+            <span th:text="${order.fullName}"></span><br>
+            <span th:text="${order.street}"></span><br>
+            <span th:text="${order.postalCode}"></span>
+            <span th:text="${order.city}"></span><br>
+            <span th:text="${order.country}"></span>
+        </address>
+
+        <h2>Produkte</h2>
+        <table class="table product-table">
+            <thead>
+            <tr>
+                <th>Produkt</th>
+                <th>Menge</th>
+                <th>Einzelpreis</th>
+                <th>Gesamt</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.items}">
+                <td th:text="${item.product.name}">Produkt</td>
+                <td th:text="${item.quantity}">1</td>
+                <td th:text="${#numbers.formatDecimal(item.priceAtPurchaseCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</td>
+                <td th:text="${#numbers.formatDecimal((item.priceAtPurchaseCents * item.quantity) / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</td>
+            </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th colspan="3" style="text-align:right">Gesamtsumme:</th>
+                <th th:text="${#numbers.formatDecimal(order.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></th>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="actions">
+            <a th:href="@{/}" class="btn primary">🛍️ Weiter einkaufen</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    main {
+        max-width: 900px;
+        margin: 2rem auto;
+    }
+    .success {
+        border-left: 4px solid #4ade80;
+        background-color: #111827;
+        color: #f3f4f6;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    h1 {
+        margin-bottom: 0.5rem;
+    }
+    .order-table th {
+        text-align: left;
+        width: 180px;
+        color: #a3a3a3;
+    }
+    .product-table th, .product-table td {
+        text-align: left;
+        padding: 0.6rem;
+    }
+    address {
+        font-style: normal;
+        margin: 1rem 0 2rem 0;
+        line-height: 1.4;
+    }
+    .status {
+        display: inline-block;
+        padding: 0.2rem 0.8rem;
+        background: #374151;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        color: #fff;
+    }
+    .actions {
+        text-align: right;
+        margin-top: 2rem;
+    }
+</style>
+</body>
+</html>

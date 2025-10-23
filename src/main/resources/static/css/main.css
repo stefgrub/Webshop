@@ -1,0 +1,63 @@
+/* Basisvariablen */
+:root {
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #666666;
+  --card: #f7f7f8;
+  --border: #e6e6e8;
+  --primary: #2563eb; /* Blau */
+  --primary-contrast: #ffffff;
+}
+
+/* Dark Theme */
+:root[data-theme="dark"] {
+  --bg: #0b0c10;
+  --text: #eaeaea;
+  --muted: #a3a3a3;
+  --card: #15171c;
+  --border: #26292f;
+  --primary: #60a5fa;
+  --primary-contrast: #0b0c10;
+}
+
+/* Global anwenden */
+html, body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Beispielhafte Komponenten */
+.navbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.brand { color: var(--text); text-decoration: none; }
+a { color: var(--primary); }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+/* Button für Toggle */
+.icon-btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  padding: .5rem .75rem;
+  border-radius: 12px;
+  cursor: pointer;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.icon-btn:hover {
+  filter: brightness(1.05);
+}
+
+/* Optional: Bilder nicht invertieren, aber leichte Anpassung im Dark Mode */
+:root[data-theme="dark"] img {
+  opacity: 0.98;
+}

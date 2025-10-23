@@ -1,0 +1,15 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Admin – Kategorien')}"></head><body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+<h1>Kategorien</h1>
+<form th:action="@{/admin/categories}" method="post" class="card glass form-grid">
+<label>Name<input name="name" required /></label>
+<label>Slug<input name="slug" required /></label>
+    <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf?.token}" />
+<button class="primary">Anlegen</button>
+</form>
+<ul>
+<li th:each="c : ${categories}"><b th:text="${c.name}"></b> — <span th:text="${c.slug}"></span></li>
+</ul>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer></body></html>

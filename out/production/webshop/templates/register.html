@@ -1,0 +1,11 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Registrieren')}"></head><body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container auth"><h1>Konto erstellen</h1>
+<form th:action="@{/register}" method="post" class="card glass" th:object="${form}">
+<label>E‑Mail<input type="email" th:field="*{email}" required /></label>
+<label>Passwort<input type="password" th:field="*{password}" minlength="6" required /></label>
+<label>Passwort wiederholen<input type="password" th:field="*{passwordRepeat}" minlength="6" required /></label>
+<p class="error" th:if="${error}" th:text="${error}"></p>
+<button type="submit" class="primary">Registrieren</button>
+</form></main>
+<footer th:replace="~{fragments :: footer}"></footer></body></html>

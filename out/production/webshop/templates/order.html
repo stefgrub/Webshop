@@ -1,0 +1,17 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Bestellung')}"></head><body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+<h1>Bestellung</h1>
+<p>Danke! Deine Bestellung <b>#<span th:text="${order.id}">1</span></b> wurde angelegt.</p>
+<p>Status: <b th:text="${order.status}">NEW</b></p>
+<h3>Positionen</h3>
+<ul>
+<li th:each="it : ${order.items}"><span th:text="${it.quantity}">1</span> ×
+<a th:href="@{'/p/' + ${it.product.slug}}" th:text="${it.product.name}">Produkt</a>
+– <span th:text="${#numbers.formatDecimal(it.priceAtPurchaseCents/100.0,1,'COMMA',2,'POINT')} + ' €'"></span></li>
+</ul>
+<p>Lieferung an: <b th:text="${order.fullName}"></b>, <span th:text="${order.street}"></span>,
+<span th:text="${order.postalCode}"></span> <span th:text="${order.city}"></span>, <span th:text="${order.country}"></span></p>
+<p>Gesamt: <b th:text="${#numbers.formatDecimal(order.totalCents/100.0,1,'COMMA',2,'POINT')} + ' €'"></b></p>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer></body></html>

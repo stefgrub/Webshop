@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Kasse')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+    <h1>🧾 Zur Kasse</h1>
+    <section th:if="${#lists.isEmpty(lines)}">
+        <p>Dein Warenkorb ist leer.</p>
+        <a th:href="@{/}" class="btn secondary">Zurück zum Shop</a>
+    </section>
+    <section th:if="${!#lists.isEmpty(lines)}" class="card glass">
+        <h2>Lieferadresse</h2>
+        <form action="#" th:action="@{/checkout}" method="post" class="checkout-form">
+            <div class="grid">
+                <label>Vollständiger Name
+                    <input type="text" name="fullName" required/>
+                </label>
+                <label>Straße und Hausnummer
+                    <input type="text" name="street" required/>
+                </label>
+                <label>PLZ
+                    <input type="text" name="postalCode" required/>
+                </label>
+                <label>Ort
+                    <input type="text" name="city" required/>
+                </label>
+                <label>Land
+                    <input type="text" name="country" value="Deutschland" required/>
+                </label>
+            </div>
+            <h2>Bestellübersicht</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Produkt</th>
+                    <th>Menge</th>
+                    <th>Preis</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="e : ${lines.entrySet()}">
+                    <td th:text="${e.key.name}">Produktname</td>
+                    <td th:text="${e.value}">1</td>
+                    <td th:text="${#numbers.formatDecimal((e.key.priceCents * e.value)/100.0,1,'COMMA',2,'POINT')} + ' €'">
+                        0,00 €
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                <tr>
+                    <th colspan="2" style="text-align:right">Gesamt:</th>
+                    <th th:text="${#numbers.formatDecimal(totalCents/100.0,1,'COMMA',2,'POINT')} + ' €'">0,00 €</th>
+                </tr>
+                </tfoot>
+            </table>
+            <div class="actions">
+                <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf?.token}" />
+                <button type="submit" class="btn primary">🛍️ Jetzt kaufen</button>
+                <a th:href="@{/cart}" class="btn secondary">← Zurück</a>
+            </div>
+        </form>
+    </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Checkout')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+<h1>Lieferadresse</h1>
+<form th:action="@{/checkout}" method="post" class="card glass form-grid">
+<label>Vollständiger Name<input name="fullName" required /></label>
+<label>Straße & Nr.<input name="street" required /></label>
+<label>PLZ<input name="postalCode" required /></label>
+<label>Stadt<input name="city" required /></label>
+<label>Land<input name="country" value="Österreich" required /></label>
+<button type="submit" class="primary">Bestellung abschließen</button>
+</form>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

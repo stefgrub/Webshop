@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Admin – Benutzer bearbeiten')}"></head>
+<link th:href="@{/css/site.css}" rel="stylesheet"/>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <h1>👤 Benutzer bearbeiten</h1>
+
+    <form th:action="@{|/admin/users/${user.id}|}" method="post" class="card glass form-grid col-span">
+        <div th:replace="~{fragments/csrf :: csrf}"></div>
+
+        <label>E-Mail</label>
+        <input type="email" th:value="${user.email}" readonly />
+
+        <label>Rolle</label>
+        <select name="role">
+            <option th:selected="${user.role == 'USER'}">USER</option>
+            <option th:selected="${user.role == 'ADMIN'}">ADMIN</option>
+        </select>
+
+        <div class="form-actions">
+            <button type="submit" class="btn primary"><span>💾 Speichern</span></button>
+            <a th:href="@{/admin/users}" class="btn ghost">Abbrechen</a>
+        </div>
+    </form>
+</main>
+
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    main {
+        max-width: 600px;
+        margin: 2rem auto;
+    }
+    label {
+        display: block;
+        margin-top: 1rem;
+        font-weight: 500;
+    }
+    select, input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #4b5563;
+        background: #111827;
+        color: #f3f4f6;
+    }
+    .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Login')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container auth">
+    <h1 class="page-title">Einloggen</h1>
+
+
+    <section class="card glass" style="max-width:750px;max-height:400px;margin-inline:auto;">
+        <form th:action="@{/login}" method="post" class="stack">
+            <label for="email">E-Mail
+                <input id="email" type="email" style="margin-top:10px;margin-bottom:10px;" name="username" required autofocus />
+            </label>
+
+            <label for="pw">Passwort
+                <input id="pw" type="password" style="margin-top:10px;margin-bottom:10px;" name="password" required />
+            </label>
+
+            <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf?.token}" />
+
+            <button type="submit" class="primary" style="width:25%;border-left-width:1px;margin-left:250px;">Login</button>
+
+            <p class="error" th:if="${param.error}">Login fehlgeschlagen.</p>
+            <div th:if="${param.logout}" class="alert success">
+                Du wurdest erfolgreich abgemeldet.
+            </div>
+
+            <p class="muted">Noch kein Konto?
+                <a th:href="@{/register}">Jetzt registrieren</a>
+            </p>
+        </form>
+    </section>
+</main>
+
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

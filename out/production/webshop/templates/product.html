@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${p.name})}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container">
+<div class="product-detail glass">
+<img class="cover" th:src="${p.imageUrl} ?: '/images/placeholder.png'" alt="Bild" />
+<div class="info">
+<h1 th:text="${p.name}">Produkt</h1>
+<p class="muted" th:text="${p.category.name}">Kategorie</p>
+<p th:text="${p.description}">Beschreibung…</p>
+<p class="price xl" th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">19,99 €</p>
+<div class="stock" th:if="${p.stock != null}">Lager: <b th:text="${p.stock}">0</b></div>
+<form th:action="@{'/cart/add/' + ${p.id}}" method="post" class="inline">
+<input type="number" name="qty" min="1" value="1" />
+<button type="submit" class="primary">In den Warenkorb</button>
+</form>
+</div>
+</div>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

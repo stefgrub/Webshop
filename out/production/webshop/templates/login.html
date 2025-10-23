@@ -1,0 +1,11 @@
+<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Login')}"></head><body>
+<header th:replace="~{fragments :: header}"></header>
+<main class="container auth"><h1>Login</h1>
+<form th:action="@{/login}" method="post" class="card glass">
+<label>E‑Mail<input type="email" name="username" required /></label>
+<label>Passwort<input type="password" name="password" required /></label>
+<button type="submit" class="primary">Einloggen</button>
+<p>Noch kein Konto? <a th:href="@{/register}">Registrieren</a></p>
+<p class="error" th:if="${param.error}">Login fehlgeschlagen.</p>
+</form></main>
+<footer th:replace="~{fragments :: footer}"></footer></body></html>

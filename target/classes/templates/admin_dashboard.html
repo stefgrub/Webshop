@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Admin Dashboard')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <h1>🛠️ Admin Dashboard</h1>
+    <p>Willkommen im Verwaltungsbereich!</p>
+
+    <section class="grid admin-grid">
+        <a class="card hover admin-card" th:href="@{/admin/products}">
+            <h2>📦 Produkte</h2>
+            <p>Verwalte dein Produktsortiment.</p>
+        </a>
+
+        <a class="card hover admin-card" th:href="@{/admin/orders}">
+            <h2>🧾 Bestellungen</h2>
+            <p>Alle Kundenbestellungen im Überblick.</p>
+        </a>
+
+        <a class="card hover admin-card" th:href="@{/admin/categories}">
+            <h2>🏷️ Kategorien</h2>
+            <p>Organisiere deine Produktkategorien.</p>
+        </a>
+
+        <a class="card hover admin-card" th:href="@{/admin/users}">
+            <h2>👤 Benutzer</h2>
+            <p>Benutzerkonten und Rollen verwalten.</p>
+        </a>
+    </section>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    main {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .admin-card {
+        text-decoration: none;
+        padding: 1.5rem;
+        border-radius: 1rem;
+        background: var(--card-bg, #1f2937);
+        color: var(--text-color, #f3f4f6);
+        transition: all 0.2s ease;
+        border: 1px solid #374151;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-4px);
+        background: #2563eb;
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    }
+
+    h2 {
+        margin-bottom: 0.5rem;
+    }
+</style>
+</body>
+</html>

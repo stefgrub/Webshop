@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head('Admin – Bestelldetails')}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <h1>🧾 Bestellung #<span th:text="${order.id}"></span></h1>
+
+    <section class="card glass">
+        <h2>Kunde & Adresse</h2>
+        <p><b th:text="${order.fullName}"></b><br>
+            <span th:text="${order.street}"></span><br>
+            <span th:text="${order.postalCode} + ' ' + ${order.city}"></span><br>
+            <span th:text="${order.country}"></span>
+        </p>
+
+        <h2>Status</h2>
+        <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+            <select name="status">
+                <option th:each="s : ${T(com.example.shop.domain.Order.Status).values()}"
+                        th:value="${s}" th:text="${s}"
+                        th:selected="${order.status == s}"></option>
+            </select>
+            <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn">Aktualisieren</button>
+        </form>
+
+        <h2>Produkte</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Produkt</th><th>Menge</th><th>Einzelpreis</th><th>Gesamt</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${order.items}">
+                <td th:text="${item.product.name}"></td>
+                <td th:text="${item.quantity}"></td>
+                <td th:text="${#numbers.formatDecimal(item.priceAtPurchaseCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
+                <td th:text="${#numbers.formatDecimal((item.priceAtPurchaseCents * item.quantity) / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p style="text-align:right; font-weight:bold;">
+            Gesamtbetrag:
+            <span th:text="${#numbers.formatDecimal(order.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></span>
+        </p>
+    </section>
+
+    <a th:href="@{/admin/orders}" class="btn secondary">← Zurück</a>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

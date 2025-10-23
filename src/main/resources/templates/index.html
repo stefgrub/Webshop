@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('WebShop – Startseite')}">
+    <link th:href="@{/css/site.css}" rel="stylesheet"/>
+</head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+<p class="badge">Gratis Versand ab 50 €</p>
+<main class="container">
+    <!-- Hero -->
+    <section class="hero card hover">
+        <div class="hero-content">
+            <h1>Beliebte Produkte</h1>
+            <p class="muted">Frisch eingetroffen – entdecke unsere Highlights.</p>
+            <form class="search wide" th:action="@{/}" method="get">
+                <input type="text" name="q" th:value="${q}" placeholder="Suche nach Produkten…"/>
+                <button type="submit" class="btn primary">Suchen</button>
+            </form>
+            <div class="category-row">
+                <a th:href="@{/c/kaffee}" class="chip">Kaffee</a>
+                <a th:href="@{/c/smartphones}" class="chip">Smartphones</a>
+                <a th:href="@{/c/zubehoer}" class="chip">Zubehör</a>
+            </div>
+        </div>
+    </section>
+    <!-- Produktgrid -->
+    <section class="grid" th:if="${products}">
+        <article class="product card hover" th:each="p : ${products.content}">
+            <a class="media" th:href="@{/p/{slug}(slug=${p.slug})}">
+                <img th:src="@{${p.imagePath}}" th:alt="${p.name}" class="cover"/>
+            </a>
+            <div class="content">
+                <h3>
+                    <a th:href="@{/p/{slug}(slug=${p.slug})}" th:text="${p.name}">Produkt</a>
+                </h3>
+                <p class="price"
+                   th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">19,99 €</p>
+                <div class="row">
+                    <a class="btn" th:href="@{/p/{slug}(slug=${p.slug})}">Details</a>
+                    <div class="cart-btn">
+                        <!-- Wenn Produkt verfügbar -->
+                        <form th:action="@{/cart/add/{id}(id=${p.id})}" method="post" th:if="${p.stock > 0}">
+                            <input type="hidden" name="qty" value="1"/>
+                            <input type="hidden" th:if="${_csrf != null}" name="_csrf" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-primary w-100">In den Warenkorb</button>
+                        </form>
+                        <!-- Wenn Produkt ausverkauft -->
+                        <button th:if="${p.stock == 0}" class="btn btn-secondary w-100" disabled>
+                            Nicht auf Lager
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

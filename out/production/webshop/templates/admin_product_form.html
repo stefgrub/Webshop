@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Produkt bearbeiten</title></head>
+<body>
+<h1 th:text="${product.id != null ? 'Produkt bearbeiten' : 'Produkt anlegen'}"></h1>
+<form th:action="${product.id != null} ? @{'/admin/products/' + ${product.id}} : @{/admin/products}"
+      method="post" th:object="${product}">
+    <label>Name<input th:field="*{name}" required></label><br>
+    <label>Slug<input th:field="*{slug}" placeholder="leer lassen → automatisch"></label><br>
+    <label>Preis (Cent)<input th:field="*{priceCents}" type="number" min="0" step="1" required></label><br>
+    <label>Kategorie
+        <select th:field="*{category}" required>
+            <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+        </select>
+    </label><br>
+    <label>Bild-URL<input th:field="*{imageUrl}"></label><br>
+    <label>Beschreibung<textarea th:field="*{description}" rows="6"></textarea></label><br>
+
+    <button type="submit">Speichern</button>
+    <a th:href="@{/admin/products}">Abbrechen</a>
+</form>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{fragments :: head(${p.name})}"></head>
+<body>
+<header th:replace="~{fragments :: header}"></header>
+
+<main class="container">
+    <section class="product-detail card glass">
+        <div class="product-media">
+            <img th:src="@{${p.imagePath}}" th:alt="${p.name}" class="cover"/>
+        </div>
+
+        <div class="product-info">
+            <h1 th:text="${p.name}" class="product-title">Produktname</h1>
+            <p class="product-category" th:text="${p.category.name}">Kategorie</p>
+
+            <p class="product-description" th:text="${p.description}">
+                Produktbeschreibung…
+            </p>
+
+            <p class="product-price"
+               th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">
+                0,00 €
+            </p>
+
+            <div class="stock"
+                 th:if="${p.stock != null && p.stock > 0}">
+                ✅ Auf Lager (<b th:text="${p.stock}">0</b> verfügbar)
+            </div>
+            <div class="stock out-of-stock"
+                 th:if="${p.stock == null || p.stock == 0}">
+                ❌ Momentan ausverkauft
+            </div>
+
+            <form th:action="@{'/cart/add/' + ${p.id}}" method="post" class="cart-form">
+                <label>
+                    Menge:
+                    <input type="number" name="qty" min="1" value="1" />
+                </label>
+
+                <button type="submit" class="btn primary" th:disabled="${p.stock == 0}">
+                    🛒 In den Warenkorb
+                </button>
+            </form>
+
+            <a th:href="@{/}" class="btn secondary">← Zurück zum Shop</a>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+
+<style>
+    /* --- Produktseite Styling --- */
+    .product-detail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: start;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    .product-media {
+        text-align: center;
+    }
+    .product-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 1rem;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease;
+    }
+    .product-image:hover {
+        transform: scale(1.02);
+    }
+    .product-info {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .product-title {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    .product-category {
+        font-size: 0.9rem;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .product-description {
+        line-height: 1.5;
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+    }
+    .product-price {
+        font-size: 1.8rem;
+        font-weight: bold;
+        color: var(--accent);
+    }
+    .cart-form {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        transition: background 0.3s ease;
+    }
+    .btn.primary {
+        background: var(--accent);
+        color: white;
+    }
+    .btn.primary:hover {
+        background: var(--accent-dark);
+    }
+    .btn.secondary {
+        background: var(--muted-bg);
+        color: var(--text);
+    }
+    .stock {
+        font-weight: 500;
+    }
+    .out-of-stock {
+        color: crimson;
+    }
+
+    /* Mobile Layout */
+    @media (max-width: 768px) {
+        .product-detail {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</body>
+</html>
