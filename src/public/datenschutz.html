@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datenschutzerklärung – Demo Webshop</title>
+    <link rel="stylesheet" th:href="@{/css/site.css}">
+</head>
+<body>
+<main style="max-width:800px;margin:4rem auto;font-family:Inter,sans-serif;">
+    <h1>Datenschutzerklärung (Demo)</h1>
+
+    <p><strong>Hinweis:</strong> Diese Website ist ein <strong>nicht-kommerzielles Lernprojekt</strong>.
+        Es werden keine echten personenbezogenen Daten verarbeitet oder an Dritte weitergegeben.</p>
+
+    <h2>1. Verantwortlicher</h2>
+    <p>
+        Stefan Grubbauer<br>
+        Oberdorf 39<br>
+        8181 Mitterdorf an der Raab<br>
+        Österreich<br>
+        E-Mail: stefan.grubbauer@icloud.com
+    </p>
+
+    <h2>2. Zweck des Projekts</h2>
+    <p>Dieses Projekt dient ausschließlich der technischen und gestalterischen Übung
+        im Rahmen von Softwareentwicklung (z.&nbsp;B. Java, Spring Boot, Thymeleaf).</p>
+
+    <h2>3. Speicherung von Daten</h2>
+    <p>Alle eingegebenen Daten (z.&nbsp;B. Test-Login, Bestellformular) werden
+        <strong>nicht dauerhaft gespeichert</strong> und ausschließlich lokal zu Testzwecken verarbeitet.</p>
+
+    <h2>4. Cookies</h2>
+    <p>Diese Website kann technisch notwendige Cookies verwenden,
+        um grundlegende Funktionen (z.&nbsp;B. Sitzungsverwaltung) zu simulieren.
+        Diese Cookies sind rein lokal und dienen nur zu Testzwecken.</p>
+
+    <h2>5. Keine Weitergabe an Dritte</h2>
+    <p>Es erfolgt keine Übermittlung von Daten an externe Anbieter oder Dienste.
+        Auch keine Analyse- oder Trackingdienste (z.&nbsp;B. Google Analytics) werden eingesetzt.</p>
+
+    <h2>6. Sicherheit</h2>
+    <p>Das Projekt nutzt nach Möglichkeit eine HTTPS-Verbindung.
+        Dennoch wird keine Garantie für vollständige Datensicherheit übernommen,
+        da es sich um ein Lernprojekt handelt.</p>
+
+    <h2>7. Rechte der Nutzer</h2>
+    <p>Da keine personenbezogenen Daten im Sinne der DSGVO verarbeitet werden,
+        bestehen keine Ansprüche auf Auskunft, Berichtigung oder Löschung.</p>
+
+    <p style="margin-top:2rem;">
+        <a th:href="@{/impressum}" style="color:#6aa7ff;">Zum Impressum</a>
+    </p>
+</main>
+</body>
+</html>
