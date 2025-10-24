@@ -32,7 +32,7 @@
             <tr th:each="p : ${page.content}">
                 <td th:text="${p.id}">1</td>
                 <td>
-                    <img th:src="@{${p.imagePath}}" th:alt="${p.name}" class="cover"/>
+                    <img th:src="${p.imagePath}" th:alt="${p.name}" class="cover"/>
                 </td>
                 <td th:text="${p.name}">Produktname</td>
                 <td th:text="${p.category != null ? p.category.name : '–'}">–</td>

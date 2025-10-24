@@ -16,6 +16,7 @@ public class SecurityConfig {
     private final UserRepo users;
 
     public SecurityConfig(UserRepo users) {
+
         this.users = users;
     }
 
@@ -39,6 +40,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
                         .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/img/**", "/uploads/**").permitAll()
                         .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -64,7 +66,7 @@ public class SecurityConfig {
                 )
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"))
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-                .headers(headers -> headers.frameOptions(f -> f.sameOrigin())); // ✅ neue DSL
+                .headers(headers -> headers.frameOptions(f -> f.sameOrigin()));
 
         return http.build();
     }
