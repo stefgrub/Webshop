@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('Login')}"></head>
+<head th:replace="~{layout :: head('Login')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container auth">
     <h1 class="page-title">Einloggen</h1>
@@ -35,6 +35,6 @@
 </main>
 
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

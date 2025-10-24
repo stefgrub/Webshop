@@ -20,6 +20,7 @@ com\example\shop\web\controller\RegistrationController.class
 com\example\shop\web\controller\CheckoutController.class
 com\example\shop\domain\User.class
 com\example\shop\web\controller\CatalogController.class
+com\example\shop\web\controller\PublicController.class
 com\example\shop\web\admin\AdminProductController.class
 com\example\shop\web\controller\AuthController.class
 com\example\shop\web\controller\ErrorController.class

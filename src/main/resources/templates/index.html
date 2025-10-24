@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('WebShop – Startseite')}">
+<head th:replace="~{layout :: head('WebShop – Startseite')}">
     <link th:href="@{/css/site.css}" rel="stylesheet"/>
 </head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
+
 <p class="badge">Gratis Versand ab 50 €</p>
+
 <main class="container">
     <!-- Hero -->
     <section class="hero card hover">
@@ -34,7 +36,7 @@
                     <a th:href="@{/p/{slug}(slug=${p.slug})}" th:text="${p.name}">Produkt</a>
                 </h3>
                 <p class="price"
-                   th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">19,99 €</p>
+                   th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'COMMA')} + ' €'">19,99 €</p>
                 <div class="row">
                     <a class="btn" th:href="@{/p/{slug}(slug=${p.slug})}">Details</a>
                     <div class="cart-btn">
@@ -54,6 +56,6 @@
         </article>
     </section>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

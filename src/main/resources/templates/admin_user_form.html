@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin – Benutzer bearbeiten')}"></head>
+<head th:replace="~{layout :: head('Admin – Benutzer bearbeiten')}"></head>
 <link th:href="@{/css/site.css}" rel="stylesheet"/>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container">
     <h1>👤 Benutzer bearbeiten</h1>
@@ -28,7 +28,7 @@
 </main>
 
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 
 <style>
     main {

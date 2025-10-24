@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin – Produkte')}"></head>
+<head th:replace="~{layout :: head('Admin – Produkte')}"></head>
 <link th:href="@{/css/site.css}" rel="stylesheet"/>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 <main class="container admin">
     <div class="admin-header">
         <h1>📦 Produkte verwalten</h1>
@@ -56,6 +56,6 @@
         <a th:if="${page.number+1 < page.totalPages}" th:href="@{|/admin/products?page=${page.number+1}&q=${q}|}" class="btn secondary small">Weiter »</a>
     </div>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

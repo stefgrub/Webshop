@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin – Bestelldetails')}"></head>
+<head th:replace="~{layout :: head('Admin – Bestelldetails')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container">
     <h1>🧾 Bestellung #<span th:text="${order.id}"></span></h1>
@@ -50,6 +50,6 @@
     <a th:href="@{/admin/orders}" class="btn secondary">← Zurück</a>
 </main>
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

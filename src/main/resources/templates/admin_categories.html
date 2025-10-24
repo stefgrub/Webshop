@@ -1,5 +1,5 @@
 <!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments :: head('Admin – Kategorien')}"></head><body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 <main class="container">
 <h1>Kategorien</h1>
 <form th:action="@{/admin/categories}" method="post" class="card glass form-grid">
@@ -12,4 +12,4 @@
 <li th:each="c : ${categories}"><b th:text="${c.name}"></b> — <span th:text="${c.slug}"></span></li>
 </ul>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer></body></html>
+<footer th:replace="~{layout :: footer}"></footer></body></html>

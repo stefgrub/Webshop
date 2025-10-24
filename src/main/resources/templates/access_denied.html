@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('Zugriff verweigert')}"></head>
+<head th:replace="~{layout :: head('Zugriff verweigert')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container">
     <section class="card glass" style="max-width:560px;margin:3rem auto;text-align:center;padding:2rem;">
@@ -14,7 +14,7 @@
     </section>
 </main>
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 
 <style>
     h1 {

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin – Bestellungen')}"></head>
+<head th:replace="~{layout :: head('Admin – Bestellungen')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 <main class="container">
     <h1>📦 Bestellungen verwalten</h1>
     <form class="filter" th:action="@{/admin/orders}" method="get">
@@ -59,7 +59,7 @@
     </table>
     <div th:if="${#lists.isEmpty(orders)}" class="muted">Keine Bestellungen vorhanden.</div>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 <style>
     .filter { margin-bottom: 1.5rem; }
     select { padding: 0.4rem; }

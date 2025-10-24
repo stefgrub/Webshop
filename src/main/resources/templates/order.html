@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Bestellung erfolgreich!')}"></head>
+<head th:replace="~{layout :: head('Bestellung erfolgreich!')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container">
     <section class="card glass success">
@@ -62,7 +62,7 @@
     </section>
 </main>
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 
 <style>
     main {

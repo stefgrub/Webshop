@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin Dashboard')}"></head>
+<head th:replace="~{layout :: head('Admin Dashboard')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <main class="container">
     <h1>🛠️ Admin Dashboard</h1>
@@ -31,7 +31,7 @@
     </section>
 </main>
 
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 
 <style>
     main {

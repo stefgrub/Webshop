@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Impressum – Demo Webshop</title>
-    <link rel="stylesheet" th:href="@{/css/site.css}">
-</head>
+<head th:replace="~{layout :: head('Impressum – Demo Webshop')}"></head>
 <body>
-<main style="max-width:800px;margin:4rem auto;font-family:Inter,sans-serif;">
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container" style="max-width:800px;margin:2rem auto;">
     <h1>Impressum (Demo)</h1>
 
     <p><strong>Hinweis:</strong> Dieser Webshop ist ein <strong>reines Lernprojekt</strong>
@@ -44,5 +41,6 @@
         <a th:href="@{/datenschutz}" style="color:#6aa7ff;">Zur Datenschutzerklärung</a>
     </p>
 </main>
+<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

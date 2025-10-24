@@ -1,6 +1,6 @@
 <!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments :: head('Registrieren')}"></head>
-<header th:replace="~{fragments :: header}"></header>
+<head th:replace="~{layout :: head('Registrieren')}"></head>
+<header th:replace="~{layout :: header}"></header>
 <main class="container auth">
     <h1>Konto erstellen</h1>
     <form th:action="@{/register}" th:object="${form}" method="post">
@@ -19,4 +19,4 @@
         <button type="submit">Registrieren</button>
     </form>
 </main>
-<footer th:replace="~{fragments :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
