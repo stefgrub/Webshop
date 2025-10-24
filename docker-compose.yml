@@ -25,44 +25,44 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-        SERVER_FORWARD_HEADERS_STRATEGY: framework
-        SERVER_ADDRESS: 0.0.0.0
-        MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info
-        MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
-        MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS: "never"
-        depends_on:
-          db:
-            condition: service_healthy
-        healthcheck:
-          test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health | grep -q UP" ]
-          interval: 15s
-          timeout: 5s
-          retries: 10
-          start_period: 30s
-        restart: unless-stopped
-        networks: [ webshop_net ]
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      SERVER_ADDRESS: 0.0.0.0
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,info
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+      MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS: "never"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health | grep -q UP" ]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    networks: [ webshop_net ]
 
-        caddy:
-          image: caddy:2
-          container_name: caddy
-          depends_on:
-            app:
-              condition: service_healthy
-          ports:
-            - "80:80"
-            - "443:443"
-            volumes:
-              - ./Caddyfile:/etc/caddy/Caddyfile:ro
-              - caddydata:/data
-              - caddyconfig:/config
-            restart: unless-stopped
-            networks: [ webshop_net ]
+    caddy:
+      image: caddy:2
+      container_name: caddy
+      depends_on:
+        app:
+          condition: service_healthy
+      ports:
+        - "80:80"
+        - "443:443"
+      volumes:
+        - ./Caddyfile:/etc/caddy/Caddyfile:ro
+        - caddydata:/data
+        - caddyconfig:/config
+      restart: unless-stopped
+      networks: [ webshop_net ]
 
-          volumes:
-            db_data:
-            caddydata:
-            caddyconfig:
+volumes:
+  db_data:
+  caddydata:
+  caddyconfig:
 
-          networks:
-            webshop_net:
-              driver: bridge
+  networks:
+    webshop_net:
+      driver: bridge
