@@ -1,39 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
-<head th:replace="~{fragments :: head('Admin – Benutzer')}"></head>
+<head th:replace="~{layout :: head('Admin – Benutzer')}"></head>
 <body>
-<header th:replace="~{fragments :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 <main class="container admin">
     <div class="admin-header">
         <h1>👤 Benutzerverwaltung</h1>
+        <a class="btn small edit" th:href="@{/admin/users/entry}">Entry<a>
     </div>
     <section class="card glass">
-        <table class="table users">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>E-Mail</th>
-                <th>Rolle</th>
-                <th>Aktionen</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="u : ${users}">
-                <td th:text="${u.id}">1</td>
-                <td th:text="${u.email}">user@example.com</td>
-                <td>
-                    <span class="badge" th:text="${u.role}" th:classappend="${u.role.toLowerCase()}"></span>
-                </td>
-                <td class="actions">
-                    <a class="btn small edit" th:href="@{|/admin/users/${u.id}/edit|}">✏️</a>
-                    <form th:action="@{|/admin/users/${u.id}/delete|}" method="post" class="inline">
-                        <div th:replace="~{fragments/csrf :: csrf}"></div>
-                        <button class="btn small danger" onclick="return confirm('Benutzer wirklich löschen?')">🗑️</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-wrap">
+            <table class="table products">
+                <thead class="product-bar">
+                <tr>
+                    <th>ID</th>
+                    <th>E-Mail</th>
+                    <th>Rolle</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${users}">
+                    <td th:text="${u.id}">1</td>
+                    <td th:text="${u.email}">user@example.com</td>
+                    <td>
+                        <span class="badge" th:text="${u.role}" th:classappend="${u.role.toLowerCase()}"></span>
+                    </td>
+                    <td class="actions">
+                        <a class="btn small edit" th:href="@{|/admin/users/${u.id}/edit|}">✏️</a>
+                        <form th:action="@{|/admin/users/${u.id}/delete|}" method="post" class="inline">
+                            <div th:replace="~{fragments/csrf :: csrf}"></div>
+                            <button class="btn small danger" onclick="return confirm('Benutzer wirklich löschen?')">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
 </main>
 <footer th:replace="~{layout :: footer}"></footer>

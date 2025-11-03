@@ -65,4 +65,11 @@ public class Product {
 
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
+
+    public java.util.List<OrderItem> getOrderItems() { return orderItems; }
+    public void setOrderItems(java.util.List<OrderItem> orderItems) { this.orderItems = orderItems; }
+
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private java.util.List<OrderItem> orderItems = new java.util.ArrayList<>();
+
 }

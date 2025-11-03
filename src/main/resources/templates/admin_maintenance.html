@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{layout :: head('Admin – Wartung')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container admin" style="max-width:900px;">
+    <h1>🛠️ Wartungsmodus</h1>
+
+    <div class="glass" style="padding:1rem;border-radius:var(--radius);margin-bottom:1rem;">
+        <h2>Aktueller Status</h2>
+        <p th:if="${current != null and current.active}">
+            <strong>Status:</strong> Aktiv<br/>
+            <strong>Nachricht:</strong> <span th:text="${current.message}">Wartung…</span><br/>
+            <strong>Start:</strong>
+            <span th:if="${current.start != null}" th:text="${#temporals.format(current.start, 'dd.MM.yyyy HH:mm')}"></span><br/>
+            <strong>Ende:</strong>
+            <span th:if="${current.end != null}" th:text="${#temporals.format(current.end, 'dd.MM.yyyy HH:mm Z')}"></span>
+        </p>
+        <p th:if="${current == null or !current.active}">
+            <strong>Status:</strong> Inaktiv
+        </p>
+        <div th:if="${param.activated}" class="toast success">Wartung aktiviert.</div>
+        <div th:if="${param.deactivated}" class="toast">Wartung deaktiviert.</div>
+    </div>
+
+    <div class="grid" style="grid-template-columns:1fr 1fr; gap:1rem;">
+        <section class="glass" style="padding:1rem;border-radius:var(--radius);">
+            <h3>Wartung aktivieren</h3>
+            <form th:action="@{/admin/maintenance/activate}" method="post" th:object="${form}">
+                <label for="message">Nachricht</label>
+                <input id="message" type="text" th:field="*{message}" placeholder="Wartungsarbeiten wegen Update…" required/>
+
+                <label for="endLocal">Voraussichtliches Ende</label>
+                <!-- datetime-local erwartet lokales Datum ohne Zeitzone -->
+                <input id="endLocal" type="datetime-local" th:field="*{endLocal}" required/>
+
+                <div style="margin-top:0.75rem;">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button class="btn">Aktivieren</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="glass" style="padding:1rem;border-radius:var(--radius);">
+            <h3>Wartung deaktivieren</h3>
+            <form th:action="@{/admin/maintenance/deactivate}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <button class="btn ghost">Deaktivieren</button>
+            </form>
+            <p class="muted" style="margin-top:0.5rem;">Setzt Status auf inaktiv und entfernt den Banner.</p>
+        </section>
+    </div>
+
+    <div class="glass" style="padding:1rem;border-radius:var(--radius);margin-top:1rem;">
+        <h3>Vorschau</h3>
+        <p>So sieht der Banner im Header aus, wenn aktiv:</p>
+        <!-- Du nutzt ohnehin die globale Anzeige im layout-Header;
+             hier nur ein Hinweis. Die echte Anzeige kommt von layout.html -->
+        <div style="border:1px dashed var(--border);padding:0.75rem;border-radius:12px;">
+            <em>Aktiviere oben und öffne irgendeine Seite → Banner erscheint im Header.</em>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

@@ -7,5 +7,5 @@ import java.util.*;
 
 
 public interface CategoryRepo extends JpaRepository<Category, Long> {
-Optional<Category> findBySlug(String slug);
+    Optional<Category> findBySlug(String slug);
 }

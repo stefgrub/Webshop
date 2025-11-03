@@ -11,69 +11,69 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link th:href="@{/css/modern.css}" rel="stylesheet"/>
     <link th:href="@{/css/site.css}" rel="stylesheet"/>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <script>
-        (function () {
-          try {
-            const KEY='webshop_theme';
-            const saved = localStorage.getItem(KEY);
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const theme = saved || (prefersDark ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', theme);
-            document.documentElement.style.colorScheme = theme;
-          } catch(_) {}
-        })();
-    </script>
+    <link th:href="@{/css/hideout.css}" rel="stylesheet"/>
+    <script th:src="@{/js/alpine-csp.min.js}" defer></script>
+    <script th:src="@{/js/theme-preload.js}"></script>
+    <script th:src="@{/js/maintenance.js}" defer></script>
+    <script th:src="@{/js/hideout.js}" defer></script>
 </head>
 
 <body>
-
 <header th:fragment="header">
+    <div th:if="${maintenance != null and maintenance.active}" id="maintFloat" class="maint-float is-hidden" th:attr="data-until=${#temporals.format(maintenance.end, 'yyyy-MM-dd''T''HH:mm:ss.SSSXXX')}" role="status">
+        <div class="maint-card">
+            <div class="maint-icon" aria-hidden="true">🔧</div>
+            <div class="maint-text">
+                <strong th:text="${maintenance.message}">Wartungsarbeiten…</strong>
+                <small>bis: <span th:text="${#temporals.format(maintenance.end, 'HH:mm')}">22:00</span> Uhr</small>
+            </div>
+        </div>
+    </div>
+
     <nav class="nav glass" x-data="{ open:false }" aria-label="Hauptnavigation">
         <div class="container">
-
-            <!-- Left: Brand -->
             <div class="nav-left flex align-center gap-sm">
                 <a class="brand" th:href="@{/}">WS⚡Shop</a>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin}" class="link">Admin</a>
+                </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/maintenance}" class="link">Wartung</a>
+                </span>
+                <a class="link" th:href="@{/}">Startseite</a>
             </div>
 
-            <!-- Center: Suche (nur Desktop) -->
-            <form class="search hide-sm" th:action="@{/}" method="get">
+            <!-- Suche (Desktop) -->
+            <form class="search hide-sm" th:action="@{/}" method="get" role="search" aria-label="Produktsuche">
                 <input type="search" name="q" th:value="${q}" placeholder="Suche Produkte…"/>
                 <button type="submit" class="btn">Suchen</button>
             </form>
 
-            <!-- Right: Aktionen (Desktop sichtbar) -->
+            <!-- Aktionen (Desktop) -->
             <div class="nav-right hide-sm">
-                <a th:href="@{/cart}">🛒 <span class="hide-sm">Warenkorb</span></a>
+                <a th:href="@{/cart}" class="link" aria-label="Warenkorb">🛒 Warenkorb</a>
                 <button type="button" id="themeToggle" title="Theme umschalten" aria-label="Theme umschalten">🌓</button>
 
                 <span th:if="${#authorization.expression('isAuthenticated()')}">
-          <span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
-          <form th:action="@{/logout}" method="post" style="display:inline;">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" class="btn ghost">Logout</button>
-          </form>
-        </span>
+                    <span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
+                    <form th:action="@{/logout}" method="post" style="display:inline;">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn ghost">Logout</button>
+                    </form>
+                </span>
                 <span th:if="${#authorization.expression('!isAuthenticated()')}">
-          <a th:href="@{/login}" class="btn ghost">Login</a>
-          <a class="btn" th:href="@{/register}">Registrieren</a>
-        </span>
-
-                <span sec:authorize="hasRole('ADMIN')">
-          <a th:href="@{/admin}" class="link">Admin</a>
-        </span>
+                    <a th:href="@{/login}" class="btn ghost">Login</a>
+                    <a class="btn" th:href="@{/register}">Registrieren</a>
+                </span>
             </div>
 
             <!-- Burger (nur Mobile) -->
-            <button class="burger only-sm" @click="open=!open" :aria-expanded="open" aria-controls="mobileMenu">
-                ☰
-            </button>
+            <button class="burger only-sm" @click="open = !open" :aria-expanded="open ? 'true' : 'false'" aria-controls="mobileMenu" aria-label="Menü öffnen/schließen">☰</button>
         </div>
 
         <!-- Mobile-Menü -->
-        <div id="mobileMenu" class="mobile-menu only-sm" x-show="open" x-collapse>
-            <form class="search" th:action="@{/}" method="get">
+        <div id="mobileMenu" class="mobile-menu only-sm" :class="{ 'open': open }" x-cloak>
+            <form class="search" th:action="@{/}" method="get" role="search" aria-label="Produktsuche (mobil)">
                 <input type="search" name="q" th:value="${q}" placeholder="Suche Produkte…"/>
                 <button type="submit" class="btn">Suchen</button>
             </form>
@@ -83,20 +83,16 @@
                 <button type="button" class="btn ghost" id="themeToggleMobile">🌓 Theme</button>
 
                 <span th:if="${#authorization.expression('isAuthenticated()')}">
-          <span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
-          <form th:action="@{/logout}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" class="btn ghost">Logout</button>
-          </form>
-        </span>
+                    <span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <button type="submit" class="btn ghost">Logout</button>
+                    </form>
+                </span>
                 <span th:if="${#authorization.expression('!isAuthenticated()')}">
-          <a th:href="@{/login}" class="btn">Login</a>
-          <a class="btn" th:href="@{/register}">Registrieren</a>
-        </span>
-
-                <span sec:authorize="hasRole('ADMIN')">
-          <a th:href="@{/admin}" class="link">Admin</a>
-        </span>
+                    <a th:href="@{/login}" class="btn">Login</a>
+                    <a class="btn" th:href="@{/register}">Registrieren</a>
+                </span>
             </div>
         </div>
     </nav>
@@ -104,26 +100,10 @@
 
 
 <main class="container" th:fragment="content">
-    <!-- Inhalt der Unterseiten wird hier eingefügt -->
 </main>
 
 <footer th:fragment="footer">
-    <!-- Theme-Toggle -->
-    <script>
-        (function(){
-          const KEY='webshop_theme';
-          function applyTheme(t){document.documentElement.setAttribute('data-theme',t);
-            document.documentElement.style.colorScheme=t; try{localStorage.setItem(KEY,t)}catch(_){}}
-          window.toggleTheme=function(){const cur=document.documentElement.getAttribute('data-theme')||'light';applyTheme(cur==='dark'?'light':'dark')};
-          document.addEventListener('DOMContentLoaded',function(){
-            const btn = document.getElementById('themeToggle');
-            if(btn) btn.addEventListener('click', e=>{e.preventDefault(); toggleTheme();});
-            const btnM = document.getElementById('themeToggleMobile');        /* ⬅ neu */
-            if(btnM) btnM.addEventListener('click', e=>{e.preventDefault(); toggleTheme();});
-          });
-        })();
-    </script>
-
+    <script th:src="@{/js/theme-toggle.js}" defer></script>
     <div class="container footer glass">
         <div>
             <strong th:text="${shopName}">WebShop</strong>
@@ -142,7 +122,7 @@
     </div>
 </footer>
 
-<!-- Globale Fragment-Includes (korrekt) -->
+<!-- Globale Fragment-Includes -->
 <div th:replace="~{fragments :: _toasts}"></div>
 <div th:replace="~{fragments :: _cartDrawer}"></div>
 <div th:replace="~{fragments :: _liveSearch}"></div>

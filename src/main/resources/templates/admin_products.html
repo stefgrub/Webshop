@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head th:replace="~{layout :: head('Admin – Produkte')}"></head>
-<link th:href="@{/css/site.css}" rel="stylesheet"/>
 <body>
 <header th:replace="~{layout :: header}"></header>
 <main class="container admin">
@@ -9,45 +8,40 @@
         <h1>📦 Produkte verwalten</h1>
         <a class="btn primary" th:href="@{/admin/products/new}">Neues Produkt</a>
     </div>
-    <!-- Suchfeld -->
-    <form method="get" class="search-bar">
-        <input type="text" name="q" th:value="${q}" placeholder="🔍 Produktname suchen…" />
-        <button type="submit" class="btn small">Suchen</button>
-    </form>
     <!-- Produkttabelle -->
     <section class="card glass">
-        <table class="table products">
-            <thead>
-            <div class="product-bar"><tr ></div>
-                <th>ID</th>
-                <th>Bild</th>
-                <th>Name</th>
-                <th>Kategorie</th>
-                <th>Preis</th>
-                <th>Lager</th>
-                <th>Aktionen</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${page.content}">
-                <td th:text="${p.id}">1</td>
-                <td>
-                    <img th:src="${p.imagePath}" th:alt="${p.name}" class="cover"/>
-                </td>
-                <td th:text="${p.name}">Produktname</td>
-                <td th:text="${p.category != null ? p.category.name : '–'}">–</td>
-                <td th:text="${#numbers.formatDecimal(p.priceCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</td>
-                <td th:text="${p.stock != null ? p.stock : 0}">0</td>
-                <td class="actions">
-                    <a class="btn small" th:href="@{|/admin/products/${p.id}/edit|}">✏️</a>
-                    <form th:action="@{|/admin/products/${p.id}/delete|}" method="post" class="inline">
-                        <div th:replace="~{fragments/csrf :: csrf}"></div>
-                        <button type="submit" class="btn small danger" onclick="return confirm('Produkt wirklich löschen?')">🗑️</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div class="table-wrap">
+            <table class="table products">
+                <thead class="product-bar">
+                <tr>
+                    <th>ID</th>
+                    <th>Bild</th>
+                    <th>Name</th>
+                    <th>Kategorie</th>
+                    <th>Preis</th>
+                    <th>Lager</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${page.content}">
+                    <td th:text="${p.id}">1</td>
+                    <td><img th:src="${p.imagePath}" th:alt="${p.name}" class="cover"/></td>
+                    <td th:text="${p.name}">Produktname</td>
+                    <td th:text="${p.category != null ? p.category.name : 'Kategorie'}">Kategorie</td>
+                    <td th:text="|${#numbers.formatDecimal(p.priceCents / 100.0, 1, 'COMMA', 2, 'POINT')} €|">0,00&nbsp;€</td>
+                    <td th:text="${p.stock != null ? p.stock : 0}">0</td>
+                    <td class="actions">
+                        <a class="btn small" th:href="@{|/admin/products/${p.id}/edit|}">✏️</a>
+                        <form th:action="@{|/admin/products/${p.id}/delete|}" method="post" class="inline">
+                            <div th:replace="~{fragments/csrf :: csrf}"></div>
+                            <button type="submit" class="btn small danger" onclick="return confirm('Produkt wirklich löschen?')">🗑️</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </section>
     <!-- Pagination -->
     <div class="pager" th:if="${page.totalPages > 1}">
