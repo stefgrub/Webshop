@@ -28,11 +28,13 @@
             <h2>👤 Benutzer</h2>
             <p>Benutzerkonten und Rollen verwalten.</p>
         </a>
+        <!-- 🧾 Neuer Button: Audit Logs -->
+        <a class="card hover admin-card" th:href="@{/admin/logs}">
+            <h2>📋 Audit Logs</h2>
+            <p>Alle Änderungen und Admin-Aktionen einsehen.</p>
+        </a>
     </section>
 </main>
-
-<footer th:replace="~{layout :: footer}"></footer>
-
 <style>
     main {
         text-align: center;

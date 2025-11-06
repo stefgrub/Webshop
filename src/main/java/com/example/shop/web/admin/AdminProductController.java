@@ -3,6 +3,8 @@ package com.example.shop.web.admin;
 import com.example.shop.domain.Product;
 import com.example.shop.repo.ProductRepo;
 import com.example.shop.repo.CategoryRepo;
+import com.example.shop.service.ProductService;
+import com.example.shop.service.ProductInUseException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -10,15 +12,19 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/admin/products")
 public class AdminProductController {
 
+    private final ProductService productService;
     private final ProductRepo products;
     private final CategoryRepo categories;
 
-    public AdminProductController(ProductRepo products, CategoryRepo categories) {
+
+    public AdminProductController(ProductService productService, ProductRepo products, CategoryRepo categories) {
+        this.productService = productService;
         this.products = products;
         this.categories = categories;
     }
@@ -77,8 +83,18 @@ public class AdminProductController {
     }
 
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable Long id) {
-        products.deleteById(id);
+    public String delete(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            productService.deleteProductById(id);
+            ra.addFlashAttribute("toastSuccess", "Produkt wurde gelöscht.");
+        } catch (ProductInUseException e) {
+            ra.addFlashAttribute("toastError",
+                    "Löschen nicht möglich: Produkt ist in Bestellungen/Warenkörben referenziert.");
+        } catch (IllegalArgumentException e) {
+            ra.addFlashAttribute("toastError", "Produkt nicht gefunden.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("toastError", "Unerwarteter Fehler beim Löschen.");
+        }
         return "redirect:/admin/products";
     }
 }

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('E-Mail bestätigen')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container" style="max-width:520px;margin:3rem auto;">
+    <section class="card" style="padding:2rem;border-radius:16px;background:var(--card);box-shadow:var(--shadow)">
+        <h1 style="margin:0 0 0.5rem;font-weight:600;">E-Mail bestätigen</h1>
+        <div th:if="${success}" class="alert alert-success" data-redirect="login" style="margin:1rem 0;padding:1rem;border-radius:12px;background:rgba(46,204,113,.15);color:#2ecc71; font-weight:600;text-align:center; animation:fadeIn .5s ease;">
+            <span th:text="${success}"></span>
+        </div>
+
+        <div th:if="${error}" style="margin:1rem 0;padding:1rem;border-radius:12px; background:rgba(231,76,60,.15);color:#e74c3c; font-weight:600;text-align:center; animation:shake .3s ease;">
+            <span th:text="${error}"></span>
+        </div>
+        <p th:text="'Wir haben einen 6-stelligen Code an ' + ${email} + ' gesendet.'"></p>
+
+        <form id="verify-form" th:action="@{/verify}" method="post">
+            <input type="hidden" name="email" th:value="${email}">
+            <input type="hidden" id="code-full" name="code" value="">
+
+            <div class="code-grid" style="display:flex;gap:12px;justify-content:center;margin:24px 0;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
+                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
+                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
+            </div>
+
+            <button class="btn btn-primary" type="submit" style="width:100%">Bestätigen</button>
+        </form>
+
+        <form th:action="@{/verify/resend}" method="post" style="margin-top:16px;text-align:center;">
+            <input type="hidden" name="email" th:value="${email}">
+            <button class="btn btn-link" type="submit">Code erneut senden</button>
+        </form>
+
+        <p style="opacity:.8;margin-top:12px;font-size:.95rem;">
+            Tipp: Du kannst den gesamten Code einfügen (Paste), die Felder füllen sich automatisch.
+        </p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script defer th:src="@{/js/verify.js}"></script>
+<script defer th:src="@{/js/verify-redirect.js}"></script>
+
+<style>
+    :root{
+      --bg: var(--surface, #0b0b0c00);
+      --border: color-mix(in oklab, var(--fg, #888) 20%, transparent);
+    }
+    .btn.btn-link{
+      background:none;border:none;padding:.25rem .5rem;cursor:pointer;
+      color:var(--link,#007aff);text-decoration:none;font-weight:500;
+    }
+    .btn.btn-link:hover{text-decoration:underline;}
+</style>
+</body>
+</html>

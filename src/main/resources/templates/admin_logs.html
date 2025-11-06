@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Audit Logs')}"></head>
+<link th:href="@{/css/site.css}" rel="stylesheet"/>
+<link th:href="@{/css/admin_logs.css}" rel="stylesheet"/>
+<body>
+<header th:replace="~{layout :: header}"></header>
+<main class="container audit-logs-page">
+    <h1>🧾 Audit Logs</h1>
+
+    <form class="row gap audit-filter" method="get" th:action="@{/admin/logs}">
+        <input class="input" type="search" name="q" th:value="${q}" placeholder="Suche (Entity/Action/Admin)…"/>
+        <button class="btn" type="submit">Filtern</button>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table audit-table">
+            <thead><tr>
+                <th>Datum</th><th>Admin</th><th>Action</th><th>Entity</th><th>Pfad</th><th>Details</th>
+            </tr></thead>
+            <tbody>
+            <tr th:each="log : ${page.content}">
+                <td th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm')}">2025-11-03 12:00</td>
+                <td th:text="${log.adminUsername}">admin</td>
+                <td th:text="${log.action}">update</td>
+                <td>
+                    <span th:text="${log.entityType}">product</span>
+                    <span th:if="${log.entityId != null}">#<span th:text="${log.entityId}">42</span></span>
+                </td>
+                <td th:text="${log.path}">/admin/products/42</td>
+                <td>
+                    <details class="audit-details">
+                        <summary>Request</summary>
+                        <pre th:text="${log.requestMethod + ' ?' + log.queryString}"></pre>
+                        <pre th:text="${log.requestBodyMasked}"></pre>
+                    </details>
+                    <details class="audit-details" th:if="${log.diffBeforeJson != null || log.diffAfterJson != null}">
+                        <summary>Diff</summary>
+                        <small>Vorher:</small><pre th:text="${log.diffBeforeJson}"></pre>
+                        <small>Nachher:</small><pre th:text="${log.diffAfterJson}"></pre>
+                    </details>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <nav class="pagination audit-pagination">
+        <a class="btn" th:if="${page.hasPrevious()}" th:href="@{/admin/logs(page=${page.number-1}, q=${q})}">Zurück</a>
+        <span>Seite <span th:text="${page.number+1}">1</span> / <span th:text="${page.totalPages}">1</span></span>
+        <a class="btn" th:if="${page.hasNext()}" th:href="@{/admin/logs(page=${page.number+1}, q=${q})}">Weiter</a>
+    </nav>
+</main>
+</body>
+</html>

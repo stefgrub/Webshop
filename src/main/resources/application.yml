@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/webshop
-    username: ${POSTGRES_USER:shop}
-    password: ${POSTGRES_PASSWORD:shop}
+    url: jdbc:postgresql://db:5432/webshop
+
+
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -35,7 +35,7 @@ server:
   port: 8080
   error:
     include-message: always
-    include-stacktrace: never  # lieber nur im DEV-Profil volle Stacktraces anzeigen
+    include-stacktrace: never
 
 logging:
   pattern:
@@ -43,6 +43,6 @@ logging:
   level:
     org.springframework.web: INFO
     org.thymeleaf: INFO
-    com.example.shop: DEBUG  # eigene Logs für dein Projekt
+    com.example.shop: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE

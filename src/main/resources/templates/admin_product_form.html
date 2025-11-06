@@ -10,7 +10,7 @@
           th:object="${product}"
           enctype="multipart/form-data"
           class="card">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
         <div class="grid">
             <label>Name
                 <input th:field="*{name}" required/>
@@ -35,9 +35,9 @@
             </label>
         </div>
         <div class="product_description">
-        <label>Beschreibung
-            <textarea rows="6" th:field="*{description}"></textarea>
-        </label>
+            <label>Beschreibung
+                <textarea rows="6" th:field="*{description}"></textarea>
+            </label>
         </div>
         <div class="actions">
             <button type="submit" class="save_button"><span>Speichern</span></button>

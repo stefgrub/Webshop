@@ -1,0 +1,278 @@
+/* ===== Maintenance Banner (modern + auto-hide styles) ===== */
+:root {
+  --maint-bg: rgba(255, 214, 10, 0.10);
+  --maint-border: rgba(255, 214, 10, 0.45);
+  --maint-text: #3a2a00;
+  --maint-icon: #f5c400;
+  --maint-glow: rgba(255, 214, 10, 0.2);
+  --maint-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+[data-theme="dark"] {
+  --maint-bg: rgba(255, 214, 10, 0.07);
+  --maint-border: rgba(255, 214, 10, 0.35);
+  --maint-text: #ffea9a;
+  --maint-icon: #ffd95b;
+  --maint-glow: rgba(255, 230, 120, 0.15);
+  --maint-shadow: 0 10px 28px rgba(0,0,0,0.35);
+}
+/* === Modern transparent scrollable maintenance banner === */
+.maint-banner,
+#maintFloat {
+  position: absolute;   /* “über der Seite” schwebend */
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  transform: translate3d(0,0,0);
+  backface-visibility: hidden;
+  will-change: transform;
+  /* Beispiel-Optik (anpassen): */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .75rem 1rem;
+  border-radius: 0;  /* volle Breite: meist ohne Radius */
+}
+
+/* Optional: Klicks durchlassen, außer direkt auf dem Banner */
+.page-underlay-clickable {
+  pointer-events: none;
+}
+
+.maint-banner,
+#maintFloat {
+  pointer-events: auto;
+}
+/* Banner ein- und ausblenden */
+.maint-banner.hidden {
+  transform: translateY(-110%);
+  opacity: 0;
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.maint-inner strong { font-weight: 600; letter-spacing: .2px; text-shadow: 0 0 6px var(--maint-glow); }
+.maint-inner strong::before {
+  content: "⚠"; display: inline-block; margin-right: 8px; transform: translateY(.06em);
+  font-size: 1.05em; color: var(--maint-icon);
+}
+.maint-inner span { opacity: .9; font-weight: 500; letter-spacing: .15px; }
+.maint-close {
+  margin-left: auto; appearance: none; border: none; background: transparent; color: var(--maint-text);
+  border-radius: 8px; font-size: 18px; width: 34px; height: 30px; cursor: pointer; display: grid; place-items: center;
+  transition: color .2s ease, background-color .2s ease, transform .15s ease;
+}
+.maint-close:hover { background: rgba(255,214,10,.15); color: var(--maint-icon); }
+.maint-close:active { transform: scale(.94); }
+@media (max-width: 640px){
+  .maint-inner {max-width: 1100px;margin: 0 auto;padding: 10px 18px;display: flex;align-items: center;gap: 12px;font-size: 0.95rem;
+}
+  .maint-close { order: 3; }
+  .maint-inner strong { flex: 1 1 100%; }
+}
+.maint-banner.only-home .maint-inner { padding-top: 8px; padding-bottom: 8px; }
+@keyframes maint-fade-slide { from{opacity:0; transform: translateY(-15px);} to{opacity:1; transform: translateY(0);} }
+/* Reopen button */
+.maint-reopen {
+  position: fixed; top: 10px; left: 12px; z-index: 1201; display: none;
+  align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px;
+  border: 1px solid var(--maint-border);
+  background: linear-gradient(180deg, var(--maint-bg), rgba(0,0,0,.08));
+  color: var(--maint-text); font-size: .9rem; cursor: pointer; user-select: none;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  transition: opacity .2s ease, transform .2s ease, border-color .2s ease;
+}
+.maint-reopen.show { display: inline-flex; }
+.maint-reopen:hover { transform: translateY(-1px); border-color: rgba(255,214,10,.6); }
+.maint-reopen:active { transform: translateY(0); }
+.maint-reopen .tri { font-size: 1rem; color: var(--maint-icon); }
+.maint-banner,
+#maintFloat {
+  transform-origin: 50% 50%;
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+/* Bewegungen reduzieren respektieren */
+@media (prefers-reduced-motion: reduce) {
+  .maint-banner,
+  #maintFloat {
+    transform: none !important;
+    animation: none !important;
+    transition: none !important;
+    position: static; /* fix -> statisch, damit nichts “schwimmt” */
+  }
+}
+
+/* ---- Wasserreflex-Overlay ---- */
+.wave-active {
+  position: absolute !important;
+  left: 0; right: 0; top: 0;
+  width: 100%;
+  z-index: 99999;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform-origin: center center;
+  pointer-events: none !important;
+  backface-visibility: hidden;
+  will-change: transform;
+  overflow: hidden; /* wichtig für Pseudo-Element */
+
+  /* Hintergrund-Glas-Effekt */
+  background: rgba(40, 40, 40, 0.45);           /* halbtransparent dunkelgrau */
+  backdrop-filter: blur(8px) saturate(140%);     /* Weichzeichnung + etwas kräftiger */
+  -webkit-backdrop-filter: blur(8px) saturate(140%);
+
+  /* Sanfte Rundung und Schatten */
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  animation: bannerFadeIn 1.2s ease forwards;
+}
+
+.wave-active[style] {
+  animation: none !important;
+
+/* Reflektierender Glanz */
+.wave-active::after {
+  content: "";
+  position: absolute;
+  inset: -60% -30%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255,255,255,0.2) 0%,
+    rgba(255,255,255,0.05) 30%,
+    transparent 70%
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.6;
+  animation: waterLight 12s linear infinite;
+}
+
+@keyframes waterLight {
+  0%   { transform: translateY(-10%) rotate(0deg); }
+  50%  { transform: translateY(10%) rotate(180deg); }
+  100% { transform: translateY(-10%) rotate(360deg); }
+}
+
+/* Header-Einfluss neutralisieren */
+header .maint-banner,
+header #maintFloat {
+  position: static !important;
+  transform: none !important;
+}
+
+/* Text im Banner klar und hell */
+.wave-active .maint-inner,
+.wave-active strong {
+  color: #fdfdfd !important;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.6);
+}
+
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === Dark Mode: leicht durchscheinendes Glas auf dunklem Hintergrund === */
+@media (prefers-color-scheme: dark) {
+  .wave-active {
+    background: rgba(40, 40, 40, 0.45);
+    backdrop-filter: blur(8px) saturate(140%);
+    -webkit-backdrop-filter: blur(8px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .wave-active .maint-inner,
+  .wave-active strong {
+    color: #fdfdfd !important;
+    text-shadow: 0 0 4px rgba(0,0,0,0.6);
+  }
+}
+
+/* === Light Mode: dezentes dunkles Blau, leicht transparent === */
+@media (prefers-color-scheme: light) {
+  .wave-active {
+    background: rgba(20, 45, 85, 0.25); /* dunkles Blau mit geringer Deckkraft */
+    backdrop-filter: blur(10px) saturate(160%);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+  .wave-active .maint-inner,
+  .wave-active strong {
+    color: #111 !important;
+    text-shadow: 0 0 2px rgba(255,255,255,0.4);
+  }
+}
+
+
+/* --- Löschen wenn nicht mehr benötigt ---*/
+/* Basis: vorhandene Banner-Styles entkräften */
+.maint-banner,
+#maintFloat {
+  background: transparent !important;
+}
+
+/* DARK MODE (bleibt wie gehabt) – bindet an dein theme-preload.js (data-theme) */
+html[data-theme="dark"] .wave-active {
+  background: rgba(40, 40, 40, 0.45) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: #fdfdfd !important;
+}
+html[data-theme="dark"] .wave-active .maint-inner,
+html[data-theme="dark"] .wave-active strong { color: #fdfdfd !important; }
+
+/* LIGHT MODE – bewusst dunkler, tiefes Blau mit geringer Opazität */
+html[data-theme="light"] .wave-active {
+  background: rgba(20, 45, 85, 0.28) !important;   /* dunkles Blau */
+  backdrop-filter: blur(10px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  color: #111 !important;
+}
+html[data-theme="light"] .wave-active .maint-inner,
+html[data-theme="light"] .wave-active strong { color: #111 !important; }
+
+/* Reflex-Overlay: im LIGHT MODE nicht aufhellen -> dunkler & dezenter */
+html[data-theme="light"] .wave-active::after {
+  /* statt overlay (hellt auf) jetzt multiply (abdunkelt) */
+  mix-blend-mode: multiply !important;
+  opacity: 0.25 !important;   /* dezenter */
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(80, 110, 160, 0.18) 0%,   /* leicht bläulich statt weiß */
+    rgba(60, 90, 130, 0.10) 30%,
+    transparent 70%
+  ) !important;
+}
+
+/* Reflex im DARK MODE darf "overlay" bleiben (schöner Schimmer) */
+html[data-theme="dark"] .wave-active::after {
+  mix-blend-mode: overlay !important;
+  opacity: 0.6 !important;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.06) 30%,
+    transparent 70%
+  ) !important;
+}
+
+/* Grundlayout + Fade-In (falls noch nicht gesetzt) */
+.wave-active {
+  position: absolute !important;
+  left: 0; right: 0; top: 0;
+  width: 100%;
+  z-index: 99999;
+  pointer-events: auto;
+  backface-visibility: hidden;
+  will-change: transform;
+  overflow: hidden;
+  border-radius: .5rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,.25);
+  opacity: 0;
+  animation: bannerFadeIn 1.2s ease forwards;
+}
+@keyframes bannerFadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

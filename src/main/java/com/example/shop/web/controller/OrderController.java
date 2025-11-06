@@ -1,4 +1,3 @@
-// OrdersController.java (neu)
 package com.example.shop.web.controller;
 
 import com.example.shop.domain.Order;

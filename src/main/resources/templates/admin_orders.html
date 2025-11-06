@@ -1,27 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="de">
 <head th:replace="~{layout :: head('Admin – Bestellungen')}"></head>
+<link th:href="@{/css/site.css}" rel="stylesheet"/>
 <body>
 <header th:replace="~{layout :: header}"></header>
 
-<main class="container">
+<main class="container admin">
 
-    <div class="admin-toolbar glass">
-        <div class="row between align-center">
-            <h1>📦 Bestellungen verwalten</h1>
-            <form class="filter" th:action="@{/admin/orders}" method="get">
-                <label for="status">Filtern nach Status:</label>
-                <select id="status" name="status" onchange="this.form.submit()">
-                    <option th:selected="${selectedStatus == null or selectedStatus == ''}" value="">Alle</option>
-                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${selectedStatus == s}"></option>
-                </select>
-            </form>
-        </div>
+    <div class="admin-header">
+        <h1>📦 Bestellungen verwalten</h1>
+        <form class="filter" th:action="@{/admin/orders}" method="get">
+            <label for="status">Filtern nach Status:</label>
+            <select id="status" name="status" onchange="this.form.submit()">
+                <option th:selected="${selectedStatus == null or selectedStatus == ''}" value="NEW">Alle</option>
+                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${selectedStatus == s}"></option>
+            </select>
+        </form>
     </div>
     <section class="card glass">
         <div class="table-wrap">
-            <table class="table orders" th:if="${!#lists.isEmpty(orders)}">
-                <thead>
+            <table class="table products" th:if="${!#lists.isEmpty(orders)}">
+                <thead class="product-bar">
                 <tr>
                     <th>ID</th>
                     <th>Kunde</th>
@@ -37,12 +36,7 @@
                     <td th:text="${o.fullName}"></td>
                     <td th:text="${#temporals.format(o.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
                     <td>
-                        <form th:action="@{'/admin/orders/' + ${o.id} + '/status'}" method="post" class="inline">
-                            <select name="status" onchange="this.form.submit()">
-                                <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}" th:selected="${o.status == s}"></option>
-                            </select>
-                            <input type="hidden" name="_csrf" th:value="${_csrf.token}" />
-                        </form>
+                        <span class="badge order-status" th:text="${o.status}" th:classappend="${' ' + (o.status != null ? o.status.name().toLowerCase() : '')}"></span>
                     </td>
                     <td th:text="${#numbers.formatDecimal(o.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></td>
                     <td class="actions">
@@ -62,8 +56,6 @@
     </section>
     <div th:if="${#lists.isEmpty(orders)}" class="muted">Keine Bestellungen vorhanden.</div>
 </main>
-
-<footer th:replace="~{layout :: footer}"></footer>
 
 <!-- 🔹 Mini-Feedback-Animation für Statuswechsel --> <script> document.addEventListener('DOMContentLoaded', () => { document.querySelectorAll('form.inline select').forEach(sel => { sel.addEventListener('change', () => { const msg = document.createElement('span'); msg.textContent = '✔ Gespeichert'; msg.className = 'status-toast'; sel.parentElement.appendChild(msg); setTimeout(() => msg.remove(), 2500); }); }); }); </script>
 

@@ -1,9 +1,83 @@
-viewwebshop.at, www.viewwebshop.at {
-  encode zstd gzip
-  header {
-    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-    X-Content-Type-Options "nosniff"
-    Referrer-Policy "strict-origin-when-cross-origin"
-  }
-  reverse_proxy app:8080
+{
+    email support@viewwebshop.at
+}
+
+viewwebshop.at {
+        # Access-Log (pro Site)
+        log {
+                output file /data/caddy/access.log {
+                        roll_size 10MiB
+                        roll_keep 10
+                        roll_keep_for 720h
+                }
+                format json
+        }
+        # Static assets: lange Caches
+        @assets path /assets/* /static/* /css/* /js/* /img/* /fonts/* /favicon.ico
+        header @assets Cache-Control "public, max-age=31536000, immutable"
+
+        # Dynamic content: kein Cache
+        @dynamic not path /assets/* /static/* /css/* /js/* /img/* /fonts/* /favicon.ico
+        header @dynamic Cache-Control "no-store, no-cache, must-revalidate"
+
+        # Actuator blocken (nur Health intern)
+        @actuator path /actuator*
+        respond @actuator 404
+
+        # === SECURITY HEADERS ===
+        header {
+                # Entferne Standard-Server-Header
+                -Server
+
+                # HSTS
+                Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+                #X-Frame-Options
+                -X-Frame-Options
+                X-Frame-Options "SAMEORIGIN"
+
+                # X-Content-Type-Options
+                -X-Content-Type-Options
+                X-Content-Type-Options "nosniff"
+
+                # Referrer-Policy
+                Referrer-Policy "strict-origin-when-cross-origin"
+
+                # Content-Security-Policy (Basisvariante)
+                # (Erlaubt nur eigene Quellen + eingebettete Bilder)
+                Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+                Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), bluetooth=(), fullscreen=(self)"
+        }
+
+        encode zstd gzip
+
+        reverse_proxy webshop_app:8080 {
+                transport http {
+                        read_timeout 30s
+                        write_timeout 30s
+                }
+        }
+}
+
+# WWW-Redirect mit HSTS
+www.viewwebshop.at {
+        # Access-Log
+        log {
+                output file /data/caddy/access.log {
+                        roll_size 10MiB
+                        roll_keep 10
+                        roll_keep_for 720h
+                }
+                format json
+        }
+
+        redir https://viewwebshop.at{uri} permanent
+        header {
+                -Server
+                -X-Content-Type-Options
+                X-Content-Type-Options "nosniff"
+                Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+                Content-Security-Policy "default-src 'self'"
+                Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        }
 }
