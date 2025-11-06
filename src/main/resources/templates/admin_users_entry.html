@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Hideout – Secret Access')}">
+    <link th:href="src/main/resources/static/css/hideout.css" rel="stylesheet"/>
+    <script th:src="src/main/resources/static/js/hideout.js}" defer></script>
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container">
+    <div id="secretBanner" class="secret-banner-backdrop" role="dialog" aria-modal="true" aria-label="Secret Access Granted">
+        <div class="secret-banner-card" id="secretCard">
+            <div class="secret-scanline" aria-hidden="true"></div>
+            <div class="secret-icon-wrap" aria-hidden="true">
+                <svg class="secret-icon" viewBox="0 0 64 64">
+                    <circle class="ring" cx="32" cy="32" r="26" />
+                    <rect class="lock" x="20" y="28" width="24" height="18" rx="4" />
+                    <path class="shackle" d="M24,28 v-4 a8,8 0 0 1 16,0 v4" />
+                    <path class="check" d="M24 38 L30 44 L42 32" />
+                </svg>
+            </div>
+            <div class="secret-text">
+                <h2>Secret Access Granted</h2>
+                <p>Willkommen im Hideout. Lade Inhalte&nbsp;…</p>
+            </div>
+            <button class="secret-dismiss" id="secretOk" aria-label="Schließen">OK</button>
+        </div>
+    </div>
+    <section class="hideout-card">
+        <h1>🔐 viewwebshop.at – Die Entstehung einer Idee</h1>
+        <p>Willkommen im geheimen Bereich von <strong>viewwebshop.at</strong> – hier gibt’s keine Rabatte, keine Werbebanner, nur die echte Geschichte hinter dem Projekt.</p>
+
+        <h2>🌱 Wie alles begann</h2>
+        <p>Was als kleine Spielerei begann, wurde schnell zu einem echten Herzensprojekt. Ich wollte keinen Standard-Shop, sondern <strong>etwas Eigenes</strong> – technisch solide, modern gestaltet und mit Liebe zum Detail.</p>
+        <p>Der erste Gedanke kam Anfang <strong>2024</strong>: <em>„Warum nicht einen eigenen Webshop entwickeln, der aussieht, als hätte er selbst Stil?“</em> Daraus wurde ein Weg voller Experimentieren, Lernen, Debuggen und späten Nächten mit Kaffee und Musik im Hintergrund. ☕🎧</p>
+
+        <h2>🏗️ Die ersten Schritte</h2>
+        <p>Der Grundstein fiel mit <strong>Spring Boot</strong>, <strong>Thymeleaf</strong> und <strong>MySQL</strong>. Ich wollte alles verstehen – jeden Controller, jedes Repository, jede Property.</p>
+        <p>Das Projekt bekam eine klare Struktur:<br><code>domain → repo → service → web.controller</code><br>Kein wildes Chaos, sondern sauberer, modularer Code.</p>
+        <p>Die ersten Entitäten – <em>Product</em>, <em>Category</em>, <em>User</em> – bildeten die Basis. Dann folgten Routing, Pagination, Templates, und schließlich das erste „es funktioniert!“-Gefühl – unbezahlbar. 😄</p>
+
+        <h2>🎨 Design & Atmosphäre</h2>
+        <p>Ich wollte ein Frontend, das <em>ruhig, modern und fließend</em> wirkt – nicht grell, sondern elegant.</p>
+        <ul>
+            <li>🌓 <strong>Dark-/Light-Mode</strong> mit sanften Übergängen</li>
+            <li>⚡ <strong>Alpine.js</strong> für reaktive, schlanke Interaktionen</li>
+            <li>🎨 <strong>CSS mit abgerundeten Ecken, Schatten und klarer Typografie</strong></li>
+            <li>📱 <strong>Responsives Design</strong> für alle Geräte</li>
+        </ul>
+        <p>Alles wurde von Hand abgestimmt – Pixel für Pixel, Variable für Variable.</p>
+        <h2>🧰 Admin & Funktionen</h2>
+        <p>Sobald das Frontend stabil war, kam der <strong>Adminbereich</strong> dazu – einfach, funktional und mit Fokus auf Übersichtlichkeit.</p>
+        <ul>
+            <li>Produkt- und Kategorieverwaltung</li>
+            <li>Benutzerverwaltung mit Rollen</li>
+            <li>Dynamische Banner, die sich schließen lassen</li>
+            <li>E-Mail-Verifikation mit sechsstelligem Code (im Apple-Design 🍏)</li>
+            <li>Sauberes Error-Handling, weil jeder mal Fehler macht 😅</li>
+        </ul>
+
+        <h2>🔒 Der geheime Bereich</h2>
+        <p>Irgendwann wollte ich einfach einen kleinen <strong>geheimen Ort</strong> einbauen – einen Platz, den man nur durch Zufall oder Neugier findet.</p>
+        <p>So entstand dieses <em>Hideout</em>: ein digitaler Rückzugsort, der zeigt, dass hinter viewwebshop.at kein Konzern, sondern <strong>eine einzelne Person mit Leidenschaft</strong> steht.</p>
+        <p>Und ja – falls du in den Logs mal sowas findest wie:<br>
+            <code>INFO  - coffeeLevel = LOW; creativity.reboot();</code><br>
+            …das war kein Bug. Das war ich. 😎</p>
+
+        <h2>⚙️ Der Weg bis hierher</h2>
+        <p>Die Entwicklung zog sich von <strong>Frühjahr 2024 bis Herbst 2025</strong>. In dieser Zeit wuchs das Projekt von einer Idee zu einem funktionierenden System – Zeile für Zeile, Nacht für Nacht.</p>
+        <p>Manchmal lief alles glatt, manchmal crashte der Server ohne Grund – aber genau das ist Programmierung: <strong>Chaos zähmen mit Logik und Geduld.</strong></p>
+
+        <h2>🚀 Was noch kommt</h2>
+        <ul>
+            <li>🛒 Live-Warenkorbsystem</li>
+            <li>💳 Integration von Zahlungsmethoden</li>
+            <li>📦 Bestell- & Versandverwaltung</li>
+            <li>🔔 Push-Benachrichtigungen</li>
+            <li>💬 Weitere Easter Eggs für die Neugierigen</li>
+        </ul>
+
+        <h2>💬 Zum Schluss</h2>
+        <p>Für mich ist dieser Webshop mehr als nur ein Projekt – es ist ein persönlicher Beweis, dass man mit Neugier, Ausdauer und Leidenschaft etwas Eigenes schaffen kann.</p>
+        <blockquote>
+            <p>„Ich wollte keinen Shop von der Stange.<br>
+                Ich wollte etwas, das Code mit Charakter verbindet.“</p>
+        </blockquote>
+        <p>Danke, dass du diesen Ort gefunden hast.<br>
+            Wenn du bis hier gelesen hast: 🫶 Willkommen im <strong>Inner Circle</strong> – du bist offiziell Teil der <em>View-Crew</em>.</p>
+
+        <hr>
+
+        <p><strong>👨‍💻 Entwickelt von:</strong> Stefan Grubbauer<br>
+            <strong>📅 Zeitraum:</strong> Frühjahr 2024 – Herbst 2025</p>
+        <pre><code>// Signature
+        while(coffee.isHot()) {
+        code.createSomethingBeautiful();
+        }</code></pre>
+        <p>☕💻✨</p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
