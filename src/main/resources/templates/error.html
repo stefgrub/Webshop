@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Fehler')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+<main class="container">
+    <section class="card glass danger">
+        <h1>Uups – da ist was schiefgelaufen</h1>
+        <p th:text="${message}">Ein unerwarteter Fehler ist aufgetreten.</p>
+        <p th:if="${status}">HTTP-Status: <span th:text="${status}"></span></p>
+        <a th:href="@{/}" class="btn">Zur Startseite</a>
+    </section>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

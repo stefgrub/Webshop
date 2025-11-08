@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Wartung')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container maint-page">
+    <section class="card maint-card">
+        <h1>Wir sind gleich wieder da.</h1>
+        <p th:text="${message}">Wartungsarbeiten: Datenbank derzeit nicht erreichbar.</p>
+        <p class="status">Status-Code: 503 Service Unavailable</p>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Admin – Bestellungen')}"></head>
+<link rel="stylesheet" th:href="@{/css/site.css}" />
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container admin">
+
+    <div class="admin-header">
+        <h1>📦 Bestellungen verwalten</h1>
+
+        <form class="filter" th:action="@{/admin/orders}" method="get">
+            <label for="status">Filtern nach Status:</label>
+            <select id="status" name="status">
+                <!-- 'Alle' = leerer Wert (WICHTIG: kein th:value, sonst Thymeleaf-Error) -->
+                <option value=""
+                        th:selected="${selectedStatus == null or selectedStatus == ''}">
+                    Alle
+                </option>
+
+                <option th:each="s : ${statuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${selectedStatus != null and selectedStatus == s}">
+                </option>
+            </select>
+            <button type="submit" class="btn small">Filtern</button>
+        </form>
+    </div>
+
+    <section class="card glass" th:if="${orders != null and !#lists.isEmpty(orders)}">
+        <div class="table-wrap">
+            <table id="orders-table" class="table products">
+                <thead class="product-bar">
+                <tr>
+                    <th>ID</th>
+                    <th>Kunde</th>
+                    <th>Datum</th>
+                    <th>Status</th>
+                    <th>Gesamt</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${orders}" th:attr="data-id=${o.id}">
+                    <td th:text="${o.id}">1</td>
+                    <td th:text="${o.fullName}">Max Mustermann</td>
+
+                    <!-- createdAt defensiv formatieren -->
+                    <td th:text="${o.createdAt != null ? #temporals.format(o.createdAt, 'dd.MM.yyyy HH:mm') : ''}">—</td>
+
+                    <td>
+              <span class="badge order-status"
+                    th:text="${o.status}"
+                    th:classappend="${o.status != null ? ' ' + o.status.name().toLowerCase() : ''}">
+                NEW
+              </span>
+                    </td>
+
+                    <!-- Euro mit Guard + Klammern -->
+                    <td th:text="${(#numbers.formatDecimal((o.totalCents != null ? (o.totalCents / 100.0) : 0.0), 1, 'COMMA', 2, 'POINT')) + ' €'}">
+                        0,00 €
+                    </td>
+
+                    <td class="actions">
+                        <a th:href="@{'/admin/orders/' + ${o.id}}" class="btn small" title="Details">🔍</a>
+
+                        <!-- Buttons werden von /js/orders.js per fetch() bedient -->
+                        <button class="btn small success" type="button"
+                                data-action="mark-shipped" th:data-id="${o.id}" title="Als versendet markieren">🚚</button>
+
+                        <button class="btn small warning" type="button"
+                                data-action="mark-cancelled" th:data-id="${o.id}" title="Stornieren">❌</button>
+
+                        <button class="btn small danger" type="button"
+                                data-action="delete-order" th:data-id="${o.id}" title="Löschen">🗑️</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="muted" th:if="${orders == null or #lists.isEmpty(orders)}">
+        Keine Bestellungen vorhanden.
+    </div>
+
+</main>
+
+<!-- Kein Inline-JS (CSP). Logik in /js/orders.js -->
+<script defer th:src="@{/js/orders.js}"></script>
+</body>
+</html>

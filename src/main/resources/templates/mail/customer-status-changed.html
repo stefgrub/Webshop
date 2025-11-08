@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<body style="font-family:Arial,Helvetica,sans-serif;">
+<h2 th:text="${brand} + ' – Statusupdate'">Statusupdate</h2>
+<p>Hallo <strong th:text="${order.fullName}">Kunde</strong>,</p>
+<p>der Status deiner Bestellung <strong>#<span th:text="${order.id}">1</span></strong> hat sich geändert:</p>
+<p>
+    <strong th:text="${oldStatus}">OLD</strong>
+    → <strong th:text="${newStatus}">NEW</strong>
+</p>
+<p><a th:href="${orderUrl}">Bestelldetails anzeigen</a></p>
+<p>Viele Grüße<br/>dein <span th:text="${brand}">WebShop</span>-Team</p>
+</body>
+</html>

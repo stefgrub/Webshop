@@ -25,11 +25,12 @@ public class SecurityConfig {
         this.users = users;
     }
 
+    // 🔹 Benutzer aus DB laden
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> users.findByEmail(username)
                 .map(u -> {
-                    String role = (u.getRole() == null) ? "USER" : u.getRole().toString();
+                    String role = (u.getRole() == null) ? "USER" : u.getRole();
                     UserDetails ud = org.springframework.security.core.userdetails.User
                             .withUsername(u.getEmail())
                             .password(u.getPasswordHash())
@@ -40,37 +41,42 @@ public class SecurityConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("Benutzer nicht gefunden: " + username));
     }
 
+    // 🔹 Passwort-Encoder
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12, new SecureRandom());
     }
 
+    // 🔹 Haupt-Sicherheitskonfiguration
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
                 .authorizeHttpRequests(auth -> auth
-                        // --- WICHTIG: Alles erlauben, was die Wartungsseite/Layouts laden ---
+                        // Öffentliche Seiten + Healthcheck + Assets
                         .requestMatchers(
                                 "/maintenance", "/maintenance/**",
                                 "/error", "/error/**",
+                                "/actuator/health", "/actuator/health/**",
                                 "/health", "/actuator/**",
                                 "/", "/impressum", "/datenschutz",
                                 "/register", "/verify", "/verify/resend",
                                 "/login", "/logout",
                                 "/favicon.ico", "/robots.txt", "/sitemap.xml",
-                                // Statische Assets (vollständig):
-                                "/css/**", "/js/**", "/img/**", "/images/**", "/assets/**", "/fonts/**", "/webjars/**"
+                                "/css/**", "/js/**", "/img/**", "/images/**",
+                                "/assets/**", "/fonts/**", "/webjars/**"
                         ).permitAll()
 
                         // Geschützte Bereiche
-                        .requestMatchers("/cart/**", "/checkout/**", "/orders/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/cart/**", "/checkout/**", "/orders/**")
+                        .hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
 
-                        // Rest muss authentifiziert sein
+                        // Alles andere muss authentifiziert sein
                         .anyRequest().authenticated()
                 )
 
-                // Login-Flow
+                // Login / Logout
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -78,8 +84,6 @@ public class SecurityConfig {
                         .failureUrl("/login?error")
                         .permitAll()
                 )
-
-                // Logout-Flow
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
                         .logoutSuccessUrl("/login?logout")
@@ -93,17 +97,32 @@ public class SecurityConfig {
                 // Fehlerseiten
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"))
 
-                // CSRF: H2-Konsole ausnehmen (falls genutzt)
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
+                // CSRF – nur H2-Konsole ausnehmen
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/actuator/**"))
 
-                // Session-Hardening
+                // Session-Schutz
                 .sessionManagement(sm -> sm
                         .sessionFixation(session -> session.migrateSession())
                         .maximumSessions(3)
                         .maxSessionsPreventsLogin(false)
                 )
 
-                .headers(headers -> headers.frameOptions(f -> f.sameOrigin()))
+                // Sicherheitsheader
+                .headers(headers -> headers
+                        .frameOptions(f -> f.sameOrigin())
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                                "script-src 'self'; " +
+                                                "style-src 'self' 'unsafe-inline'; " +
+                                                "img-src 'self' data:; " +
+                                                "object-src 'none'; " +
+                                                "base-uri 'self'; " +
+                                                "frame-ancestors 'none';"
+                                )
+                        )
+                )
+
                 .requestCache(Customizer.withDefaults());
 
         return http.build();

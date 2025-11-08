@@ -1,6 +1,5 @@
-
 <!-- fragments/_filterChips.html -->
 <div class="chips" style="display:flex; gap:.5rem; flex-wrap:wrap;">
-  <a th:each="cat : ${categories}" th:href="@{|/c/${cat.slug}|}" class="chip" th:text="${cat.name}">Kategorie</a>
-  <a th:each="tag : ${tags}" th:href="@{|/t/${tag}|}" class="chip" th:text="${tag}">Tag</a>
+    <a th:each="cat : ${categories}" th:href="@{|/c/${cat.slug}|}" class="chip" th:text="${cat.name}">Kategorie</a>
+    <a th:each="tag : ${tags}" th:href="@{|/t/${tag}|}" class="chip" th:text="${tag}">Tag</a>
 </div>

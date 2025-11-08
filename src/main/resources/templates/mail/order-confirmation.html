@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>Danke für deine Bestellung</title></head>
+<body style="font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;color:#111">
+<h2>Danke für deine Bestellung #<span th:text="${order.id}">0</span> 🙌</h2>
+
+<p>Hallo <b th:text="${order.fullName}">Kunde</b>,<br>
+    wir haben deine Bestellung erhalten. Hier eine Übersicht:</p>
+
+<table role="presentation" width="100%" cellpadding="6" cellspacing="0" style="border-collapse:collapse;background:#f8f8f8">
+    <thead>
+    <tr>
+        <th align="left">Produkt</th>
+        <th align="right">Menge</th>
+        <th align="right">Preis</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="it : ${items}">
+        <td th:text="${it.product != null ? it.product.name : 'Produkt'}">Produkt</td>
+        <td align="right" th:text="${it.quantity}">1</td>
+        <td align="right" th:text="${#numbers.formatDecimal((it.priceAtPurchaseCents != null ? it.priceAtPurchaseCents : 0) / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</td>
+    </tr>
+    </tbody>
+</table>
+
+<p style="text-align:right;font-weight:bold">
+    Gesamt:
+    <span th:text="${#numbers.formatDecimal((order.totalCents != null ? order.totalCents : 0) / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'">0,00 €</span>
+</p>
+
+<p>
+    Lieferadresse:<br>
+    <span th:text="${order.fullName}">Name</span><br>
+    <span th:text="${order.street}">Straße</span><br>
+    <span th:text="${order.postalCode} + ' ' + ${order.city}">PLZ Ort</span><br>
+    <span th:text="${order.country}">Land</span>
+</p>
+
+<p><a th:href="${orderUrl}">Bestelldetails ansehen</a></p>
+<p>Liebe Grüße<br>Dein WebShop Team</p>
+</body>
+</html>

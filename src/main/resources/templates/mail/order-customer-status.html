@@ -1,0 +1,9 @@
+<!-- templates/mail/order-customer-status.html -->
+<html><body>
+<p>Hallo <b th:text="${order.fullName}">Kunde</b>,</p>
+<p>der Status deiner Bestellung <b>#<span th:text="${order.id}">1</span></b> hat sich geändert:
+    <b th:text="${order.status}">NEW</b>.
+</p>
+<p><a th:href="${ordersUrl}">Bestellung anzeigen</a></p>
+<p>Liebe Grüße,<br/>dein <span th:text="${brand}">Shop</span>-Team</p>
+</body></html>

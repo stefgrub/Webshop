@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('Hideout – Secret Access')}">
-    <link th:href="src/main/resources/static/css/hideout.css" rel="stylesheet"/>
-    <script th:src="src/main/resources/static/js/hideout.js}" defer></script>
-</head>
+<head th:replace="~{layout :: head('Hideout – Secret Access')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
 
@@ -91,11 +88,11 @@
 
         <p><strong>👨‍💻 Entwickelt von:</strong> Stefan Grubbauer<br>
             <strong>📅 Zeitraum:</strong> Frühjahr 2024 – Herbst 2025</p>
-        <pre><code>// Signature
-        while(coffee.isHot()) {
-        code.createSomethingBeautiful();
-        }</code></pre>
-        <p>☕💻✨</p>
+        <pre><code>
+while(coffee.isHot()) {
+  code.createSomethingBeautiful();
+}
+        </code></pre>
     </section>
 </main>
 

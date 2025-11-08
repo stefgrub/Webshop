@@ -1,5 +1,4 @@
-
 <!-- fragments/_liveSearch.html -->
 <form @submit.prevent="submit" x-data="liveSearch()" class="search wide" th:action="@{/}" method="get">
-  <input type="search" class="input" name="q" x-model="q" th:value="${q}" placeholder="Suche nach Produkten…"/>
+    <input type="search" class="input" name="q" x-model="q" th:value="${q}" placeholder="Suche nach Produkten…"/>
 </form>

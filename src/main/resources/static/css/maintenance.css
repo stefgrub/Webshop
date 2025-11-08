@@ -113,7 +113,7 @@
   backface-visibility: hidden;
   will-change: transform;
   overflow: hidden; /* wichtig für Pseudo-Element */
-
+  pointer-events: none !important;
   /* Hintergrund-Glas-Effekt */
   background: rgba(40, 40, 40, 0.45);           /* halbtransparent dunkelgrau */
   backdrop-filter: blur(8px) saturate(140%);     /* Weichzeichnung + etwas kräftiger */
@@ -280,4 +280,78 @@ html[data-theme="dark"] .wave-active::after {
 .wave-active button,
 .wave-active a {
   pointer-events: auto !important;
+}
+
+.wave-active .maint-close { position: relative; z-index: 2; }
+
+/* ===== FINAL FIX PATCH (ans Ende der Datei setzen) ===== */
+
+/* 1) JS-Transform darf NICHT vom Fade-In überschrieben werden -> kein Pflicht-Fade */
+.wave-active { opacity: 1 !important; animation: none !important; }
+
+/* 2) Container lässt Klicks durch, nur Inhalt klickbar */
+.wave-active { pointer-events: none !important; }
+.wave-active .maint-inner,
+.wave-active .maint-close,
+.wave-active button,
+.wave-active a { pointer-events: auto !important; }
+
+/* 3) Close-Button sicher über Overlay */
+.wave-active .maint-close { position: relative; z-index: 2; }
+
+/* 4) Theme-Farben (Light dunkles Blau, Dark wie gehabt) mit hoher Spezifität */
+html[data-theme="light"] .wave-active {
+  background: rgba(20, 45, 85, 0.28) !important;  /* dunkles Blau, dezent */
+  backdrop-filter: blur(10px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(160%) !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  color: #111 !important;
+}
+html[data-theme="dark"] .wave-active {
+  background: rgba(40, 40, 40, 0.45) !important;
+  backdrop-filter: blur(8px) saturate(140%) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  color: #fdfdfd !important;
+}
+
+/* 5) Reflex im Light-Mode abdunkeln (statt aufhellen) */
+html[data-theme="light"] .wave-active::after {
+  mix-blend-mode: multiply !important;
+  opacity: 0.25 !important;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(80,110,160,0.18) 0%,
+    rgba(60,90,130,0.10) 30%,
+    transparent 70%) !important;
+}
+/* 6) Reflex im Dark-Mode: Overlay (schöner Schimmer) */
+html[data-theme="dark"] .wave-active::after {
+  mix-blend-mode: overlay !important;
+  opacity: 0.6 !important;
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255,255,255,0.18) 0%,
+    rgba(255,255,255,0.06) 30%,
+    transparent 70%) !important;
+}
+
+/* 7) Syntax-Fehler reparieren: fehlende schließende Klammer nach [.wave-active[style]] */
+.wave-active[style] { /* nur als Hook genutzt, keine Animation erzwingen */ }
+
+.maint-close {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, transform .15s ease;
+}
+.maint-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--maint-icon);
+}
+.maint-close:active {
+  transform: scale(0.92);
 }

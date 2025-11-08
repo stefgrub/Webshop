@@ -585,3 +585,26 @@ h1{ color: var(--fg); opacity:.98; } h2,h3{ color: var(--fg); opacity:.94; }
   color: var(--fg) !important;
 }
 .category-row .btn:hover, .category-row a:hover{ background: var(--glass) !important; }
+
+
+
+/* 🟢 Toast-Benachrichtigungen (unten rechts) */
+.toast {position: fixed;bottom: 24px;right: 24px;padding: 10px 16px;border-radius: 8px;
+  font-size: 14px;font-weight: 500;z-index: 9999;opacity: 0;animation: fadeInOut 3s forwards;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);pointer-events: none;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+/* Farben je nach Typ */
+.toast.info {background: #374151;color: #fff;}
+.toast.success {background: #16a34a;color: #fff;}
+.toast.error {background: #dc2626;color: #fff;}
+/* Sanfte Einblend-/Ausblend-Animation */
+@keyframes fadeInOut {
+  0% {opacity: 0;transform: translateY(10px);}
+  10% {opacity: 1;transform: translateY(0);}
+  90% {opacity: 1;transform: translateY(0);}
+  100% {opacity: 0;transform: translateY(10px);}}
+/* 🌙 Dunkelmodus-Unterstützung (wenn dein Theme Darkmode nutzt) */
+:root[data-theme="dark"] .toast.info {background: #111827;color: #e5e7eb;}
+:root[data-theme="dark"] .toast.success {background: #22c55e;color: #f0fdf4;}
+:root[data-theme="dark"] .toast.error {background: #ef4444;color: #fff;}

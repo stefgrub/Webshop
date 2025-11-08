@@ -1,7 +1,6 @@
-
 <!-- fragments/_toasts.html -->
 <div class="toast" aria-live="polite">
-  <template x-for="t in $store.toast.list" :key="t.id">
-    <div class="msg fade-in" x-text="t.msg"></div>
-  </template>
+    <template x-for="t in $store.toast.list" :key="t.id">
+        <div class="msg fade-in" x-text="t.msg"></div>
+    </template>
 </div>
