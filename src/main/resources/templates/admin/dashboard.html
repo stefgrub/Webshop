@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Admin Dashboard')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container">
+    <h1>Admin Dashboard</h1>
+
+    <section class="card">
+        <h2>Feature-Flags</h2>
+        <p>
+            Checkout UI:
+            <span class="badge"
+                  th:text="${(featureCheckoutUiEnabled?:false) ? 'AN' : 'AUS'}"
+                  th:classappend="${(featureCheckoutUiEnabled?:false) ? ' badge--success' : ' badge--muted'}">
+        AUS
+      </span>
+        </p>
+    </section>
+
+    <section class="card">
+        <h2>Aktive Hinweise</h2>
+        <div th:if="${#lists.isEmpty(announcements)}">Keine aktiven Hinweise.</div>
+        <table th:if="${!#lists.isEmpty(announcements)}" class="table">
+            <thead>
+            <tr>
+                <th>Level</th><th>Titel</th><th>Von</th><th>Bis</th><th>Aktualisiert</th><th>Von</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${announcements}">
+                <td th:text="${a.level}">0</td>
+                <td>
+                    <a th:if="${a.linkUrl}" th:href="${a.linkUrl}" th:text="${a.title}">Titel</a>
+                    <span th:if="${!a.linkUrl}" th:text="${a.title}">Titel</span>
+                </td>
+                <td th:text="${#temporals.format(a.fromTs,'dd.MM.yyyy HH:mm')}">-</td>
+                <td th:text="${#temporals.format(a.toTs,'dd.MM.yyyy HH:mm')}">-</td>
+                <td th:text="${#temporals.format(a.updatedAt,'dd.MM.yyyy HH:mm')}">-</td>
+                <td th:text="${a.updatedBy}">system</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

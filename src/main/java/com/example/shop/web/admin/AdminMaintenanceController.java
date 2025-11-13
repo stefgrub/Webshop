@@ -1,96 +1,42 @@
 package com.example.shop.web.admin;
 
 import com.example.shop.settings.SettingsService;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping({"/admin/maintenance", "/admin/settings/maintenance"})
+@RequiredArgsConstructor
+@RequestMapping("/admin/maintenance")
 public class AdminMaintenanceController {
 
-    private static final ZoneId ZONE = ZoneId.of("Europe/Vienna");
     private final SettingsService settings;
 
-    public AdminMaintenanceController(SettingsService settings) {
-        this.settings = settings;
-    }
-
     @GetMapping
-    public String form(Model model) {
-        var view = settings.readMaintenance(); // liefert u.a. view.end() als ZonedDateTime oder null
-
-        var f = new Form();
-        boolean enabledFlag = settings.getBool(SettingsService.K_ENABLED, false);
-        f.setEnabled(enabledFlag);
-        f.setMessage(view.message());
-        f.setHomepageOnly(view.homepageOnly());
-
-        // ZonedDateTime (aus Settings) -> LocalDateTime fürs <input type="datetime-local">
-        if (view.end() != null) {
-            f.setEnd(view.end().withZoneSameInstant(ZONE).toLocalDateTime());
-        } else {
-            f.setEnd(null);
-        }
-
-        model.addAttribute("form", f);
-        return "admin_maintenance";
+    public String view(Model model) {
+        model.addAttribute("m", settings.readMaintenance()); // nutzt readMaintenance()
+        return "admin/maintenance";
     }
 
     @PostMapping
-    public String save(@Validated @ModelAttribute("form") Form form,
-                       RedirectAttributes ra) {
+    public String save(
+            @RequestParam(name = "enabled", defaultValue = "false") boolean enabled,
+            @RequestParam(name = "message", defaultValue = "") String message,
+            @RequestParam(name = "end", required = false) String endIso,
+            @RequestParam(name = "homepageOnly", defaultValue = "false") boolean homepageOnly,
+            @RequestParam(name = "audience", defaultValue = "ALL") String audience,
+            @RequestParam(name = "level", defaultValue = "0") int level,
+            @RequestParam(name = "link", required = false) String link
+    ) {
+        settings.setBool(SettingsService.K_ENABLED, enabled);
+        settings.setString(SettingsService.K_MESSAGE, message);
+        settings.setString(SettingsService.K_HP_ONLY, Boolean.toString(homepageOnly));
+        settings.setString(SettingsService.K_AUDIENCE, audience);
+        settings.setInt(SettingsService.K_LEVEL, level);
+        settings.setString(SettingsService.K_LINK, link == null ? "" : link.trim());
+        settings.setString(SettingsService.K_END, endIso == null ? "" : endIso.trim()); // ISO-8601: 2025-11-11T23:59:00Z
 
-        // LocalDateTime (aus Formular) -> ZonedDateTime (Europe/Vienna) für die Settings
-        ZonedDateTime endZdt = null;
-        LocalDateTime endLdt = form.getEnd();
-        if (endLdt != null) {
-            endZdt = endLdt.atZone(ZONE);
-        }
-
-        settings.setBool(SettingsService.K_ENABLED, form.isEnabled());
-        settings.setString(SettingsService.K_MESSAGE, form.getMessage() == null ? "" : form.getMessage().trim());
-        settings.setZonedDateTime(SettingsService.K_END, endZdt);
-        settings.setBool(SettingsService.K_HP_ONLY, form.isHomepageOnly());
-
-        ra.addFlashAttribute("saved", true);
-        return "redirect:/admin/maintenance";
-    }
-
-    @Validated
-    public static class Form {
-        private boolean enabled;
-
-        @NotBlank(message = "Bitte eine Banner-Nachricht angeben.")
-        private String message;
-
-        private boolean homepageOnly;
-
-        // WICHTIG: LocalDateTime für <input type="datetime-local">
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        private LocalDateTime end;
-
-        public boolean isEnabled() { return enabled; }
-        public void setEnabled(boolean enabled) { this.enabled = enabled; }
-
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
-
-        public boolean isHomepageOnly() { return homepageOnly; }
-        public void setHomepageOnly(boolean homepageOnly) { this.homepageOnly = homepageOnly; }
-
-        public LocalDateTime getEnd() { return end; }
-        public void setEnd(LocalDateTime end) { this.end = end; }
+        return "redirect:/admin/maintenance?ok=1";
     }
 }

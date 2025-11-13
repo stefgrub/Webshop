@@ -1,119 +1,93 @@
 package com.example.shop.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 @Entity
-@Table(name = "audit_logs",
+@Table(
+        name = "audit_logs",
         indexes = {
-                @Index(name="idx_audit_created", columnList = "createdAt"),
-                @Index(name="idx_audit_admin",   columnList = "adminUsername"),
-                @Index(name="idx_audit_entity",  columnList = "entityType,entityId"),
-                @Index(name="idx_audit_action",  columnList = "action")
-        })
+                @Index(name = "idx_audit_logs_created_at", columnList = "created_at"),
+                @Index(name = "idx_audit_admin", columnList = "admin_username"),
+                @Index(name = "idx_audit_entity", columnList = "entity_type, entity_id")
+        }
+)
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AuditLog {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private OffsetDateTime createdAt = OffsetDateTime.now();
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // DB: timestamptz, Default now()
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
+
+    // "alte" Felder (bereits im System verwendet)
+    @Column(name = "admin_username")
     private String adminUsername;
+
+    @Column(name = "admin_ip")
     private String adminIp;
+
+    @Column(name = "user_agent", columnDefinition = "text")
     private String userAgent;
 
+    @Column(name = "action", nullable = false)
     private String action;
+
+    @Column(name = "entity_type")
     private String entityType;
+
+    // In der DB aktuell TEXT -> String verwenden
+    @Column(name = "entity_id")
     private String entityId;
 
-    @Column(columnDefinition="TEXT") private String path;
+    @Column(name = "path", columnDefinition = "text")
+    private String path;
+
+    @Column(name = "request_method")
     private String requestMethod;
-    @Column(columnDefinition="TEXT") private String queryString;
-    @Column(columnDefinition="TEXT") private String requestBodyMasked;
 
-    @Column(columnDefinition="TEXT") private String diffBeforeJson;
-    @Column(columnDefinition="TEXT") private String diffAfterJson;
+    @Column(name = "query_string", columnDefinition = "text")
+    private String queryString;
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public OffsetDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(OffsetDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    public String getAdminUsername() {
-        return adminUsername;
-    }
-    public void setAdminUsername(String adminUsername) {
-        this.adminUsername = adminUsername;
-    }
-    public String getAdminIp() {
-        return adminIp;
-    }
-    public void setAdminIp(String adminIp) {
-        this.adminIp = adminIp;
-    }
-    public String getUserAgent() {
-        return userAgent;
-    }
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-    public String getAction() {
-        return action;
-    }
-    public void setAction(String action) {
-        this.action = action;
-    }
-    public String getEntityType() {
-        return entityType;
-    }
-    public void setEntityType(String entityType) {
-        this.entityType = entityType;
-    }
-    public String getEntityId() {
-        return entityId;
-    }
-    public void setEntityId(String entityId) {
-        this.entityId = entityId;
-    }
-    public String getPath() {
-        return path;
-    }
-    public void setPath(String path) {
-        this.path = path;
-    }
-    public String getRequestMethod() {
-        return requestMethod;
-    }
-    public void setRequestMethod(String requestMethod) {
-        this.requestMethod = requestMethod;
-    }
-    public String getQueryString() {
-        return queryString;
-    }
-    public void setQueryString(String queryString) {
-        this.queryString = queryString;
-    }
-    public String getRequestBodyMasked() {
-        return requestBodyMasked;
-    }
-    public void setRequestBodyMasked(String requestBodyMasked) {
-        this.requestBodyMasked = requestBodyMasked;
-    }
-    public String getDiffBeforeJson() {
-        return diffBeforeJson;
-    }
-    public void setDiffBeforeJson(String diffBeforeJson) {
-        this.diffBeforeJson = diffBeforeJson;
-    }
-    public String getDiffAfterJson() {
-        return diffAfterJson;
-    }
-    public void setDiffAfterJson(String diffAfterJson) {
-        this.diffAfterJson = diffAfterJson;
+    // JSON-Spalten als Map + expliziter JSON-Typ
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "request_body_masked", columnDefinition = "jsonb")
+    private Map<String, Object> requestBodyMasked;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "diff_before_json", columnDefinition = "jsonb")
+    private Map<String, Object> diffBeforeJson;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "diff_after_json", columnDefinition = "jsonb")
+    private Map<String, Object> diffAfterJson;
+
+    // "neue" optionale Spalten (können parallel zu den alten genutzt werden)
+    @Column(name = "admin", length = 190)
+    private String admin;
+
+    @Column(name = "ip", length = 64)
+    private String ip;
+
+    @Column(name = "entity", length = 190)
+    private String entity;
+
+    @PrePersist
+    void prePersist() {
+        if (createdAt == null) {
+            createdAt = OffsetDateTime.now();
+        }
     }
 }

@@ -26,6 +26,8 @@ spring:
     validate-migration-naming: true
 
 server:
+  compression:
+    enabled: false
   forward-headers-strategy: framework
   servlet:
     session:

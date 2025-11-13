@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Einstellungen')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container">
+    <h1>⚙️ Einstellungen</h1>
+    <nav class="tabs">
+        <a href="#appearance">Aussehen</a>
+        <a href="#features">Features</a>
+        <a href="#mail">E-Mail</a>
+    </nav>
+
+    <section id="appearance" class="card p">
+        <h2>Aussehen</h2>
+        <form th:action="@{/admin/settings/theme}" method="post" class="row gap">
+            <label>Primärfarbe:
+                <input type="color" name="primary" th:value="${themePrimary}">
+            </label>
+            <button class="btn">Speichern</button>
+        </form>
+        <p class="muted">Wir setzen nur CSS-Variablen – keine Abstände/Layouts werden geändert.</p>
+    </section>
+
+    <section id="features" class="card p">
+        <h2>Feature-Flags</h2>
+        <form th:action="@{/admin/settings/flag}" method="post" class="flag">
+            <input type="hidden" name="code" value="checkoutV2">
+            <label><input type="checkbox" name="enabled" th:checked="${checkoutV2}"> Checkout v2 aktiv</label>
+            <button class="btn small">Speichern</button>
+        </form>
+        <form th:action="@{/admin/settings/flag}" method="post" class="flag">
+            <input type="hidden" name="code" value="liveSearch">
+            <label><input type="checkbox" name="enabled" th:checked="${liveSearch}"> Live-Suche aktiv</label>
+            <button class="btn small">Speichern</button>
+        </form>
+    </section>
+
+    <section id="mail" class="card p">
+        <h2>E-Mail</h2>
+        <form th:action="@{/admin/settings/mail}" method="post" class="row gap">
+            <label>Absender-Adresse:
+                <input class="input" type="email" name="from" th:value="${mailFrom}" required>
+            </label>
+            <button class="btn">Speichern</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

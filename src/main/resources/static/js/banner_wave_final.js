@@ -1,3 +1,6 @@
+// banner_wave_final.js
+// Banner gleitet wie im Wasser über die gesamte Seite
+// + Pause bei Hover oder Scroll + X-Button schließen
 (function () {
 
   function pick() {
@@ -39,12 +42,14 @@
 
     let maxY = measure(el);
 
+    // --- Resize ---
     let resizeTimer;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => { maxY = measure(el); }, 150);
     }, { passive: true });
 
+    // --- Bewegung ---
     const T = 20;
     const jitterPx = 0.25;
     const ease = p => 0.5 * (1 - Math.cos(2 * Math.PI * p));

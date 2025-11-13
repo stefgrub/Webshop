@@ -1,4 +1,4 @@
-:root{--bg:#0f1115; --card:#181a20; --text:#dcdcdc; --text-strong:#fff; --accent:#8af;}
+:root{--bg:#0f1115; --card:#181a20; --text:#dcdcdc; --text-strong:#0ba7c7; --accent:#8af;}
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial,"Noto Sans","Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol",sans-serif;

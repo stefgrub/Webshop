@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="de"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
-
+<html lang="de" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)" th:inline="none">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="robots" content="noindex,nofollow"/>
     <meta name="_csrf" th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title th:text="${title}">WebShop</title>
@@ -16,17 +12,30 @@
     <link th:href="@{/css/site.css}" rel="stylesheet"/>
     <link th:href="@{/css/hideout.css}" rel="stylesheet"/>
     <link th:href="@{/css/maintenance.css}" rel="stylesheet"/>
+    <link th:href="@{/css/admin.css}" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/future-theme-overrides.css">
+    <link rel="stylesheet" href="/css/theme-extras.css">
     <script th:src="@{/js/alpine-csp.min.js}" defer></script>
     <script th:src="@{/js/theme-preload.js}"></script>
     <script th:src="@{/js/maintenance.js}" defer></script>
     <script th:src="@{/js/hideout.js}" defer></script>
     <script th:src="@{/js/theme-toggle.js}" defer></script>
     <script th:src="@{/js/banner_wave_final.js(v=${#dates.createNow().time})}" defer></script>
+    <style th:inline="javascript">
+        :root{ --theme-primary: [[${@settingsService.getString('theme.primary', '#4f46e5')}]]; }
+    </style>
 </head>
 
 <body>
+<section th:if="${announcements != null}">
+    <div th:each="a : ${announcements}" class="alert" th:classappend="' ' + ${a.levelCss()}">
+        <strong th:text="${a.title}">Titel</strong>
+        <span th:utext="${a.message}">Nachricht</span>
+        <a th:if="${a.linkUrl}" th:href="${a.linkUrl}" class="btn small">Mehr</a>
+    </div>
+</section>
 <header th:fragment="header">
-    <div th:if="${maintenance != null and maintenance.active}" id="maintFloat" class="maint-banner" th:classappend="${maintenance != null and maintenance.homepageOnly} ? ' only-home'">
+    <div th:if="${maintenance != null and maintenance.enabled}" id="maintFloat" class="maint-banner" th:classappend="${maintenance != null and maintenance.homepageOnly} ? ' only-home'">
         <div class="maint-inner">
             <strong th:text="${maintenance.message}">Wartungsarbeiten …</strong>
             <span th:if="${maintenance.end != null}">

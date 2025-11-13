@@ -1,44 +1,66 @@
 package com.example.shop.config;
 
-import com.example.shop.infra.MaintenanceGuard;
-import com.example.shop.infra.MaintenanceInterceptor;
-import com.example.shop.service.AuditLogService;
 import com.example.shop.web.AuditWriteInterceptor;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    private final AuditLogService audit;
-    private final MaintenanceGuard maintenanceGuard;
 
-    public WebConfig(AuditLogService audit, MaintenanceGuard maintenanceGuard) {
+    private final AuditWriteInterceptor audit;
+
+    public WebConfig(AuditWriteInterceptor audit) {
         this.audit = audit;
-        this.maintenanceGuard = maintenanceGuard;
-    }
-
-    @Bean
-    public MaintenanceInterceptor maintenanceInterceptor() {
-        return new MaintenanceInterceptor(maintenanceGuard);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(maintenanceInterceptor())
-                .order(0)
-                .excludePathPatterns(
-                        "/maintenance", "/maintenance/**",
-                        "/error", "/error/**",
-                        "/health", "/actuator/**",
-                        "/login", "/logout", "/oauth2/**",
-                        "/favicon.ico", "/robots.txt", "/sitemap.xml",
-                        "/css/**", "/js/**", "/images/**", "/img/**", "/assets/**", "/webjars/**"
-                );
+        // Wir wollen den Body für alle Requests verfügbar machen – filtern in der Interceptor-Logik
+        registry.addInterceptor(audit).addPathPatterns("/**");
+    }
 
-        registry.addInterceptor(new AuditWriteInterceptor(audit))
-                .addPathPatterns("/admin/**")
-                .order(1);
+    /**
+     * Registriert einen Filter, der Request/Response wrappt, damit der Body im Interceptor
+     * (via ContentCachingRequestWrapper) auslesbar ist.
+     */
+    @Bean
+    public FilterRegistrationBean<OncePerRequestFilter> contentCachingFilter() {
+        OncePerRequestFilter filter = new OncePerRequestFilter() {
+            @Override
+            protected void doFilterInternal(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            FilterChain chain) throws ServletException, IOException {
+
+                ContentCachingRequestWrapper wrappedRequest =
+                        new ContentCachingRequestWrapper(request, 1024 * 1024); // bis 1 MB puffern
+                ContentCachingResponseWrapper wrappedResponse =
+                        new ContentCachingResponseWrapper(response);
+
+                try {
+                    chain.doFilter(wrappedRequest, wrappedResponse);
+                } finally {
+                    // Response-Body zurück in den echten Response kopieren
+                    wrappedResponse.copyBodyToResponse();
+                }
+            }
+        };
+
+        FilterRegistrationBean<OncePerRequestFilter> reg = new FilterRegistrationBean<>(filter);
+        reg.setOrder(Ordered.HIGHEST_PRECEDENCE + 20);
+        reg.addUrlPatterns("/*");
+        return reg;
     }
 }

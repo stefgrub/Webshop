@@ -1,0 +1,380 @@
+/* ==========================================================================
+   Admin Styles (admin.css)
+   - Fokus: Farben, Rahmen, Typografie für Admin-Bereich
+   - Nicht-invasiv: keine großen Layout-/Spacing-Änderungen
+   - Theme-aware via [data-theme="dark"]
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Farb- und Typo-Variablen (greifen deine bestehenden root-Variablen auf)
+   -------------------------------------------------------------------------- */
+:root {
+  --admin-bg:            #0b1220;       /* Fallbacks, falls nicht gesetzt */
+  --admin-surface:       #111827;
+  --admin-card:          #1f2937;
+  --admin-border:        #2d3748;
+  --admin-muted:         #9aa4b2;
+  --admin-text:          #e5e7eb;
+  --admin-primary:       var(--theme-primary, #4f46e5);
+  --admin-primary-ghost: rgba(79, 70, 229, .15);
+  --admin-success:       #10b981;
+  --admin-warning:       #f59e0b;
+  --admin-danger:        #ef4444;
+  --admin-info:          #3b82f6;
+  --admin-focus:         rgba(79, 70, 229, .35);
+  --admin-shadow:        rgba(0,0,0,.25);
+}
+
+[data-theme="light"] {
+  --admin-bg:            #ffffff;
+  --admin-surface:       #f7f8fb;
+  --admin-card:          #ffffff;
+  --admin-border:        #e5e7eb;
+  --admin-muted:         #6b7280;
+  --admin-text:          #1f2937;
+  --admin-primary-ghost: rgba(79, 70, 229, .10);
+  --admin-shadow:        rgba(0,0,0,.08);
+}
+
+/* --------------------------------------------------------------------------
+   Grundstruktur Admin
+   -------------------------------------------------------------------------- */
+body.admin,
+.admin-scope {
+  background: var(--admin-bg);
+  color: var(--admin-text);
+}
+
+.admin-muted,
+.muted {
+  color: var(--admin-muted);
+}
+
+/* Header/Title minimal veredeln, ohne Spacing zu ändern */
+.admin-title h1,
+h1.admin-title {
+  color: var(--admin-text);
+  letter-spacing: .2px;
+}
+
+/* --------------------------------------------------------------------------
+   Cards (Admin Dashboard & Card-Übersichten)
+   -------------------------------------------------------------------------- */
+.card.admin-card {
+  background: var(--admin-card);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 24px -12px var(--admin-shadow);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+.card.admin-card.hover:hover {
+  transform: translateY(-4px);
+  background: var(--admin-primary);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 16px 36px -12px rgba(79,70,229,.45);
+}
+
+.card.admin-card h2 {
+  margin: 0 0 .35rem 0;
+  font-weight: 700;
+}
+
+/* Grid nur optisch – kein Spacing ändern */
+.grid.admin-grid {
+  /* Layout kommt bereits aus HTML; hier nur Farbanpassungen falls nötig */
+}
+
+/* --------------------------------------------------------------------------
+   Buttons (Base + Ghost + Small)
+   -------------------------------------------------------------------------- */
+.btn {
+  appearance: none;
+  border: 1px solid var(--admin-primary);
+  background: var(--admin-primary);
+  color: #fff;
+  padding: .55rem .9rem;
+  border-radius: .65rem;
+  font-weight: 600;
+  line-height: 1.1;
+  transition: filter .15s ease, transform .05s ease, background .15s ease, border-color .15s ease;
+  cursor: pointer;
+}
+
+.btn:hover {
+  filter: brightness(1.06);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.ghost {
+  background: var(--admin-primary-ghost);
+  color: var(--admin-primary);
+  border-color: transparent;
+}
+
+.btn.small {
+  padding: .4rem .65rem;
+  font-size: .9rem;
+  border-radius: .55rem;
+}
+
+/* Link-Optik im Admin (z. B. „Mehr“, Sekundäraktionen) */
+a.link, .link a {
+  color: var(--admin-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: color .15s ease, border-color .15s ease;
+}
+
+a.link:hover {
+  color: var(--admin-primary);
+  border-color: var(--admin-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Inputs / Suche / Filterbar
+   -------------------------------------------------------------------------- */
+.input,
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+  background: var(--admin-surface);
+  color: var(--admin-text);
+  border: 1px solid var(--admin-border);
+  border-radius: .6rem;
+  padding: .55rem .7rem;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+.input::placeholder,
+input::placeholder,
+textarea::placeholder {
+  color: var(--admin-muted);
+}
+
+.input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 .18rem var(--admin-focus);
+}
+
+/* Filterbar (z. B. oberhalb von Listen) */
+.filter-bar {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: .8rem;
+  padding: .8rem;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+/* --------------------------------------------------------------------------
+   Tabellen (Listen: Produkte, Orders, Users, Logs)
+   -------------------------------------------------------------------------- */
+.table,
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: .8rem;
+  overflow: hidden;
+}
+
+.table thead th,
+table thead th {
+  background: linear-gradient(0deg, var(--admin-surface), var(--admin-surface));
+  color: var(--admin-muted);
+  font-weight: 700;
+  text-align: left;
+  border-bottom: 1px solid var(--admin-border);
+  padding: .7rem .8rem;
+  white-space: nowrap;
+}
+
+.table tbody tr,
+table tbody tr {
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.table tbody tr:hover,
+table tbody tr:hover td {
+  background: rgba(255,255,255,.02);
+}
+
+.table td,
+.table th,
+table td,
+table th {
+  padding: .7rem .8rem;
+  vertical-align: middle;
+}
+
+/* Tabellen-Toolbar (optional) */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: .6rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   Badges / Status
+   -------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .25rem .5rem;
+  border-radius: .5rem;
+  font-size: .85rem;
+  font-weight: 600;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-text);
+}
+
+.badge.success { border-color: rgba(16,185,129,.35); background: rgba(16,185,129,.1); color: var(--admin-success); }
+.badge.warning { border-color: rgba(245,158,11,.35); background: rgba(245,158,11,.1); color: var(--admin-warning); }
+.badge.danger  { border-color: rgba(239,68,68,.35);  background: rgba(239,68,68,.1);  color: var(--admin-danger);  }
+.badge.info    { border-color: rgba(59,130,246,.35);  background: rgba(59,130,246,.1);  color: var(--admin-info);    }
+
+/* Announcement-Level (falls in Admin gelistet) */
+.level-1, .level-info    { color: var(--admin-info); }
+.level-2, .level-warning { color: var(--admin-warning); }
+.level-3, .level-danger  { color: var(--admin-danger); }
+
+/* --------------------------------------------------------------------------
+   Pagination (Fragment: fragments/pagination :: pager)
+   -------------------------------------------------------------------------- */
+.pager {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  justify-content: flex-end;
+}
+
+.pager .btn.ghost {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  color: var(--admin-text);
+}
+
+.pager .btn.ghost:hover {
+  border-color: var(--admin-primary);
+  color: var(--admin-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Admin Panels / Boxen
+   -------------------------------------------------------------------------- */
+.admin-panel,
+.box {
+  background: var(--admin-card);
+  border: 1px solid var(--admin-border);
+  border-radius: .8rem;
+  padding: 1rem;
+  box-shadow: 0 8px 24px -12px var(--admin-shadow);
+}
+
+.admin-panel .panel-title {
+  font-weight: 700;
+  margin-bottom: .5rem;
+}
+
+/* --------------------------------------------------------------------------
+   Tabellenaktionen (Icon-/Text-Buttons in Listen)
+   -------------------------------------------------------------------------- */
+.table-actions,
+.actions {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.action-link {
+  color: var(--admin-primary);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px dashed transparent;
+  transition: color .15s ease, border-color .15s ease;
+}
+
+.action-link:hover {
+  border-color: var(--admin-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Alerts / Hinweise (im Admin)
+   -------------------------------------------------------------------------- */
+.alert {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .75rem .9rem;
+  border-radius: .65rem;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface);
+  color: var(--admin-text);
+}
+
+.alert.info    { border-color: rgba(59,130,246,.25);  background: rgba(59,130,246,.1); }
+.alert.success { border-color: rgba(16,185,129,.25);  background: rgba(16,185,129,.1); }
+.alert.warn    { border-color: rgba(245,158,11,.25);  background: rgba(245,158,11,.1); }
+.alert.error   { border-color: rgba(239,68,68,.25);   background: rgba(239,68,68,.1); }
+
+/* --------------------------------------------------------------------------
+   Kleinzeug
+   -------------------------------------------------------------------------- */
+hr.admin-sep {
+  border: 0;
+  border-top: 1px solid var(--admin-border);
+  margin: 1rem 0;
+}
+
+code.admin-code {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border);
+  padding: .2rem .4rem;
+  border-radius: .35rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: .9em;
+}
+
+/* Checkboxen nur optisch, keine Funktion ändern */
+input[type="checkbox"].admin-check {
+  accent-color: var(--admin-primary);
+}
+
+/* Links in Tabellen-Zellen */
+td a.link {
+  border-bottom: 1px dashed transparent;
+}
+td a.link:hover {
+  border-color: var(--admin-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Kleinigkeiten
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .table thead { display: none; }
+  .table tr,
+  table tr { display: grid; border-bottom: 1px solid var(--admin-border); padding: .6rem .4rem; }
+  .table td,
+  table td { padding: .35rem 0; }
+  .pager { justify-content: center; }
+}

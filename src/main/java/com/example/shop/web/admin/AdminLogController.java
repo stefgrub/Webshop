@@ -1,31 +1,28 @@
 package com.example.shop.web.admin;
 
-import com.example.shop.repo.AuditLogRepo;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import com.example.shop.service.AuditLogService;
+import org.springframework.data.domain.Page;
+import com.example.shop.domain.AuditLog;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/admin/logs")
 public class AdminLogController {
-    private final AuditLogRepo logs;
-    public AdminLogController(AuditLogRepo logs) { this.logs = logs; }
+
+    private final AuditLogService service;
+
+    public AdminLogController(AuditLogService service) {
+        this.service = service;
+    }
 
     @GetMapping
-    public String list(@RequestParam(value="q", required=false) String q,
-                       @PageableDefault(size=50, sort="createdAt",
-                               direction = org.springframework.data.domain.Sort.Direction.DESC)
-                       Pageable pageable,
-                       Model m) {
-        var page = (q==null || q.isBlank())
-                ? logs.findAll(pageable)
-                : logs.findByEntityTypeContainingIgnoreCaseOrActionContainingIgnoreCaseOrAdminUsernameContainingIgnoreCase(q,q,q,pageable);
-        m.addAttribute("page", page);
-        m.addAttribute("q", q);
-        return "admin_logs";
+    public String list(@RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "25") int size,
+                       Model model) {
+        Page<AuditLog> p = service.page(page, size);
+        model.addAttribute("page", p);
+        return "admin/logs";
     }
 }

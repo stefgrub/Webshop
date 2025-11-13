@@ -8,13 +8,13 @@
     <h1 class="page-title">Einloggen</h1>
 
     <section class="card glass" style="max-width:750px;max-height:400px;margin-inline:auto;">
-        <form th:action="@{/login}" method="post" class="stack">
+        <form th:action="@{/login}" method="post" class="stack" autocomplete="on">
             <label for="email">E-Mail
                 <input id="email" type="email" style="margin-top:10px;margin-bottom:10px;" name="username" required autofocus />
             </label>
 
             <label for="pw">Passwort
-                <input id="pw" type="password" style="margin-top:10px;margin-bottom:10px;" name="password" required />
+                <input id="pw" type="password" style="margin-top:10px;margin-bottom:10px;" name="password" autocomplete="current-password" required />
             </label>
 
             <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf?.token}" />

@@ -1,0 +1,266 @@
+/* -----------------------
+   1) Semantic Color Tokens
+   ----------------------- */
+:root {
+  /* Base (Light) */
+  --bg:            #f9fafb;
+  --text:          #111827;
+  --muted:         #6b7280;
+  --card-bg:       #ffffff;
+  --line:          rgba(17, 24, 39, 0.08);
+
+  /* Accents */
+  --primary:       #10bce0; /* cyan */
+  --primary-hi:    #13c9f0;
+  --primary-lo:    #0ba7c7;
+
+  --success:       #22c55e;
+  --warning:       #f59e0b;
+  --danger:        #ef4444;
+  --info:          #7c4dff; /* violet accent companion */
+
+  /* Surfaces (glass hints) */
+  --surface:       rgba(255, 255, 255, 0.8);
+  --surface-2:     rgba(255, 255, 255, 0.6);
+
+  /* Shadows / Rings */
+  --shadow:        0 4px 18px rgba(2, 6, 23, 0.08);
+  --shadow-strong: 0 6px 26px rgba(2, 6, 23, 0.16);
+  --ring:          0 0 0 3px rgba(16, 188, 224, 0.25);
+}
+
+[data-theme="dark"] {
+  --bg:            #0b1020;
+  --text:          #e6f1ff;
+  --muted:         #96a2b4;
+  --card-bg:       rgba(255,255,255,0.05);
+  --line:          rgba(230, 241, 255, 0.08);
+
+  --primary:       #10bce0;
+  --primary-hi:    #44d6f2;
+  --primary-lo:    #0fa9c8;
+
+  --success:       #22d87b;
+  --warning:       #f5b31b;
+  --danger:        #ff6767;
+  --info:          #9a7eff;
+
+  --surface:       rgba(255, 255, 255, 0.06);
+  --surface-2:     rgba(255, 255, 255, 0.04);
+
+  --shadow:        0 6px 22px rgba(0,0,0,0.35);
+  --shadow-strong: 0 10px 30px rgba(0,0,0,0.5);
+  --ring:          0 0 0 3px rgba(16, 188, 224, 0.35);
+}
+
+/* -----------------------
+   2) Buttons (base + variants)
+   ----------------------- */
+
+/* Reset-ish (color only) */
+button,
+.btn {
+  color: var(--text);
+  background-color: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: inherit; /* keep your current rounding */
+  box-shadow: var(--shadow);
+  transition: background-color .2s ease, box-shadow .2s ease, border-color .2s ease, color .2s ease, transform .06s ease;
+}
+button:hover,
+.btn:hover {
+  background-color: var(--surface-2);
+  border-color: color-mix(in oklab, var(--line), var(--text) 10%);
+  box-shadow: var(--shadow-strong);
+}
+button:active,
+.btn:active {
+  transform: translateY(1px);
+}
+button:focus-visible,
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-strong), var(--ring);
+}
+
+/* Primary (solid gradient, cyan→violet) */
+.btn-primary,
+button.btn-primary,
+button[type="submit"],
+input[type="submit"].btn,
+a.btn-primary {
+  color: #ffffff;
+  background: linear-gradient(90deg, var(--primary), var(--info));
+  border-color: transparent;
+  box-shadow: 0 6px 20px rgba(16, 188, 224, 0.35);
+}
+.btn-primary:hover,
+button.btn-primary:hover,
+button[type="submit"]:hover,
+input[type="submit"].btn:hover,
+a.btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 26px rgba(16, 188, 224, 0.45);
+}
+.btn-primary:disabled,
+button.btn-primary:disabled,
+button[type="submit"]:disabled,
+input[type="submit"].btn:disabled,
+a.btn-primary.disabled {
+  opacity: .65;
+  filter: none;
+  box-shadow: none;
+}
+
+/* Outline */
+.btn-outline,
+a.btn-outline,
+button.btn-outline {
+  color: var(--primary);
+  background-color: transparent;
+  border-color: color-mix(in oklab, var(--primary), #0000 60%);
+  box-shadow: none;
+}
+.btn-outline:hover,
+a.btn-outline:hover,
+button.btn-outline:hover {
+  background: color-mix(in oklab, var(--primary), var(--bg) 85%);
+  color: color-mix(in oklab, var(--primary), #ffffff 20%);
+  border-color: var(--primary);
+}
+
+/* Ghost (text-only with subtle hover) */
+.btn-ghost,
+a.btn-ghost,
+button.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border-color: transparent;
+  box-shadow: none;
+}
+.btn-ghost:hover,
+a.btn-ghost:hover,
+button.btn-ghost:hover {
+  background: color-mix(in oklab, var(--primary), var(--bg) 92%);
+}
+
+/* Success / Warning / Danger buttons */
+.btn-success { background: linear-gradient(90deg, var(--success), color-mix(in oklab, var(--success), #000 10%)); color: #fff; border-color: transparent; }
+.btn-warning { background: linear-gradient(90deg, var(--warning), color-mix(in oklab, var(--warning), #000 10%)); color: #111827; border-color: transparent; }
+.btn-danger  { background: linear-gradient(90deg, var(--danger),  color-mix(in oklab, var(--danger),  #000 10%)); color: #fff; border-color: transparent; }
+
+.btn-success:hover,
+.btn-warning:hover,
+.btn-danger:hover { filter: brightness(1.06); }
+
+/* Disabled style (generic) */
+.btn:disabled, button:disabled, .btn.disabled {
+  opacity: .6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* -----------------------
+   3) Badges (pill labels)
+   ----------------------- */
+.badge {
+  display: inline-block;
+  color: var(--text);
+  background: color-mix(in oklab, var(--text), var(--bg) 92%);
+  border: 1px solid var(--line);
+  border-radius: inherit; /* respect existing rounding */
+  box-shadow: none;
+}
+.badge-primary  { color: #0b1f2a; background: color-mix(in oklab, var(--primary), var(--bg) 80%); border-color: color-mix(in oklab, var(--primary), #0000 60%); }
+.badge-success  { color: #06240f; background: color-mix(in oklab, var(--success), var(--bg) 82%); border-color: color-mix(in oklab, var(--success), #0000 60%); }
+.badge-warning  { color: #2b1c00; background: color-mix(in oklab, var(--warning), var(--bg) 78%); border-color: color-mix(in oklab, var(--warning), #0000 55%); }
+.badge-danger   { color: #2a0b0b; background: color-mix(in oklab, var(--danger),  var(--bg) 82%); border-color: color-mix(in oklab, var(--danger),  #0000 60%); }
+.badge-info     { color: #0f0e29; background: color-mix(in oklab, var(--info),    var(--bg) 80%); border-color: color-mix(in oklab, var(--info),    #0000 60%); }
+
+/* Subtle glowing dot for badges with [data-dot] */
+.badge[data-dot]::before {
+  content: "";
+  display: inline-block;
+  width: .5em;
+  height: .5em;
+  margin-right: .4em;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* -----------------------
+   4) Alerts (soft panels)
+   ----------------------- */
+.alert {
+  color: var(--text);
+  background: color-mix(in oklab, var(--text), var(--bg) 95%);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--primary);
+  border-radius: inherit; /* keep existing rounding */
+  box-shadow: var(--shadow);
+}
+.alert a { color: var(--primary); }
+.alert a:hover { text-decoration: underline; }
+
+.alert-primary {
+  background: color-mix(in oklab, var(--primary), var(--bg) 92%);
+  border-color: color-mix(in oklab, var(--primary), #0000 60%);
+  border-left-color: var(--primary);
+  color: color-mix(in oklab, var(--primary), #000 40%);
+}
+.alert-success {
+  background: color-mix(in oklab, var(--success), var(--bg) 92%);
+  border-color: color-mix(in oklab, var(--success), #0000 60%);
+  border-left-color: var(--success);
+  color: color-mix(in oklab, var(--success), #000 45%);
+}
+.alert-warning {
+  background: color-mix(in oklab, var(--warning), var(--bg) 90%);
+  border-color: color-mix(in oklab, var(--warning), #0000 55%);
+  border-left-color: var(--warning);
+  color: color-mix(in oklab, var(--warning), #000 55%);
+}
+.alert-danger {
+  background: color-mix(in oklab, var(--danger), var(--bg) 92%);
+  border-color: color-mix(in oklab, var(--danger), #0000 60%);
+  border-left-color: var(--danger);
+  color: color-mix(in oklab, var(--danger), #000 45%);
+}
+.alert-info {
+  background: color-mix(in oklab, var(--info), var(--bg) 92%);
+  border-color: color-mix(in oklab, var(--info), #0000 60%);
+  border-left-color: var(--info);
+  color: color-mix(in oklab, var(--info), #000 40%);
+}
+
+/* Dismiss button (if present) */
+.alert .close, .alert .btn-close {
+  color: inherit;
+  background: transparent;
+  border: 1px solid transparent;
+}
+.alert .close:hover, .alert .btn-close:hover {
+  border-color: currentColor;
+  background: color-mix(in oklab, currentColor, var(--bg) 85%);
+}
+
+/* -----------------------
+   5) Inputs (only color ring to match buttons)
+   ----------------------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  box-shadow: var(--ring);
+  border-color: color-mix(in oklab, var(--primary), #0000 40%);
+}

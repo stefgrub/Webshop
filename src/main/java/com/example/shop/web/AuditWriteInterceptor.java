@@ -6,82 +6,124 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
-import java.util.HashMap;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
+@Component
 public class AuditWriteInterceptor implements HandlerInterceptor {
+
     private final AuditLogService audit;
 
-    public AuditWriteInterceptor(AuditLogService audit) { this.audit = audit; }
+    public AuditWriteInterceptor(AuditLogService audit) {
+        this.audit = audit;
+    }
+
+    private boolean isWriteMethod(String m) {
+        return "POST".equals(m) || "PUT".equals(m) || "PATCH".equals(m) || "DELETE".equals(m);
+    }
 
     @Override
-    public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) {
+    public void afterCompletion(HttpServletRequest req, HttpServletResponse res, Object handler, Exception ex) {
         final String path = req.getRequestURI();
         final String method = req.getMethod();
-
-        if (!path.startsWith("/admin/") || !isWrite(method) || path.startsWith("/admin/logs")) {
-            return true;
-        }
+        if (!path.startsWith("/admin")) return;     // nur Admin-Bereich
+        if (!isWriteMethod(method)) return;         // nur schreibende Requests
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = (auth != null) ? auth.getName() : "anonymous";
+        String username = (auth != null && auth.isAuthenticated()) ? auth.getName() : "anonymous";
 
-        Map<String,Object> form = formParams(req);
-        var log = new AuditLog();
-        log.setAdminUsername(username);
-        log.setAdminIp(clientIp(req));
-        log.setUserAgent(req.getHeader("User-Agent"));
-        log.setAction(guessAction(method, path));
-        log.setEntityType(guessEntity(path));
-        log.setEntityId(guessId(path));
+        // Request-Body ermitteln (wenn ContentCachingRequestFilter aktiv ist)
+        Map<String, Object> body = readBodyOrParams(req);
+
+        AuditLog log = new AuditLog();
+        log.setAdmin(username);
+        log.setAdminIp(getClientIp(req));
+        log.setUserAgent(Optional.ofNullable(req.getHeader("User-Agent")).orElse(""));
+
+        // optional: von Controllern/Services später konkret setzen
+        log.setEntity(null);
+        log.setEntityId(null);
+        log.setAction(method);
+
         log.setPath(path);
         log.setRequestMethod(method);
         log.setQueryString(req.getQueryString());
-        log.setRequestBodyMasked(audit.mask(form));
+
+        log.setRequestBodyMasked(audit.mask(body));
+        log.setDiffBeforeJson(null);
+        log.setDiffAfterJson(null);
 
         audit.save(log);
-        return true;
     }
 
-    private boolean isWrite(String m) { return "POST".equals(m)||"PUT".equals(m)||"PATCH".equals(m)||"DELETE".equals(m); }
-
-    private String clientIp(HttpServletRequest req){
-        String xf = req.getHeader("X-Forwarded-For");
-        return (xf!=null && !xf.isBlank()) ? xf.split(",")[0].trim() : req.getRemoteAddr();
-    }
-
-    private String guessAction(String method, String path) {
-        return switch (method) {
-            case "POST" -> path.endsWith("/delete") ? "delete" : "create";
-            case "PUT","PATCH" -> "update";
-            case "DELETE" -> "delete";
-            default -> "unknown";
-        };
-    }
-
-    private String guessEntity(String path) {
-        // /admin/products/123/edit -> products
-        String[] p = path.split("/");
-        return p.length>2 ? p[2] : null;
-    }
-
-    private String guessId(String path) {
-        for (String p : path.split("/")) if (p.matches("\\d+")) return p;
-        return null;
-    }
-
-    private Map<String,Object> formParams(HttpServletRequest req) {
-        try {
-            if (req.getContentType()!=null &&
-                    req.getContentType().toLowerCase().startsWith("application/x-www-form-urlencoded")) {
-                Map<String,String[]> pm = req.getParameterMap();
-                Map<String,Object> flat = new HashMap<>();
-                pm.forEach((k,v) -> flat.put(k, (v!=null && v.length==1) ? v[0] : v));
-                return flat;
+    /** liest JSON/urlencoded, fällt sonst auf Parameter zurück */
+    private Map<String, Object> readBodyOrParams(HttpServletRequest req) {
+        // Versuche ContentCachingRequestWrapper
+        if (req instanceof ContentCachingRequestWrapper w) {
+            byte[] buf = w.getContentAsByteArray();
+            if (buf != null && buf.length > 0) {
+                String raw = new String(buf, StandardCharsets.UTF_8);
+                Map<String, Object> asMap = tryParseFormOrJson(raw);
+                if (asMap != null && !asMap.isEmpty()) return asMap;
             }
-        } catch (Exception ignored) {}
-        return null;
+        }
+        // Fallback: Parameter-Map (GET/POST form)
+        Map<String, Object> m = new LinkedHashMap<>();
+        req.getParameterMap().forEach((k, v) -> m.put(k, (v != null && v.length == 1) ? v[0] : v));
+        return m;
+    }
+
+    private String getClientIp(HttpServletRequest req) {
+        String xf = req.getHeader("X-Forwarded-For");
+        if (xf != null && !xf.isBlank()) return xf.split(",")[0].trim();
+        return req.getRemoteAddr();
+    }
+
+    /** sehr einfache Heuristik: JSON erkennen, sonst urlencoded versuchen */
+    private Map<String, Object> tryParseFormOrJson(String s) {
+        if (s == null || s.isBlank()) return null;
+        String t = s.trim();
+
+        // JSON? (hier nur als raw speichern; echte Parse kannst du mit Jackson nachrüsten)
+        if ((t.startsWith("{") && t.endsWith("}")) || (t.startsWith("[") && t.endsWith("]"))) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("_raw", t);
+            return m;
+        }
+
+        // urlencoded key=value&key2=value2
+        Map<String, Object> form = new LinkedHashMap<>();
+        String[] pairs = t.split("&");
+        for (String pair : pairs) {
+            if (pair.isEmpty()) continue;
+            int i = pair.indexOf('=');
+            if (i > -1) {
+                String k = decode(pair.substring(0, i));
+                String v = decode(pair.substring(i + 1));
+                form.put(k, v);
+            } else {
+                form.put(decode(pair), "");
+            }
+        }
+        if (form.isEmpty()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("_raw", t);
+            return m;
+        }
+        return form;
+    }
+
+    private String decode(String s) {
+        try {
+            return java.net.URLDecoder.decode(s, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return s;
+        }
     }
 }

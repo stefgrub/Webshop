@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Aufruf: th:replace="~{fragments/pagination :: pager(page=${page}, baseUrl='/admin/logs')}" -->
+<div th:fragment="pager(page, baseUrl)">
+    <nav class="pager" th:if="${page != null and page.totalPages > 1}"
+         style="display:flex;align-items:center;gap:.75rem;margin-top:1.25rem">
+        <a class="btn ghost"
+           th:if="${page.hasPrevious()}"
+           th:href="@{__${baseUrl}__(page=${page.number - 1}, size=${page.size})}">« Zurück</a>
+
+        <span class="muted">
+      Seite <b th:text="${page.number + 1}">1</b> / <span th:text="${page.totalPages}">1</span>
+    </span>
+
+        <a class="btn ghost"
+           th:if="${page.hasNext()}"
+           th:href="@{__${baseUrl}__(page=${page.number + 1}, size=${page.size})}">Weiter »</a>
+    </nav>
+</div>
+</body>
+</html>
