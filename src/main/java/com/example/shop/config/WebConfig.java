@@ -14,6 +14,8 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import java.io.IOException;
 
@@ -21,6 +23,9 @@ import java.io.IOException;
 public class WebConfig implements WebMvcConfigurer {
 
     private final AuditWriteInterceptor audit;
+
+    @Value("${app.media-dir}")
+    private String mediaDir;
 
     public WebConfig(AuditWriteInterceptor audit) {
         this.audit = audit;
@@ -30,6 +35,12 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // Wir wollen den Body für alle Requests verfügbar machen – filtern in der Interceptor-Logik
         registry.addInterceptor(audit).addPathPatterns("/**");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/media/**")
+                .addResourceLocations("file:" + mediaDir + "/");
     }
 
     /**

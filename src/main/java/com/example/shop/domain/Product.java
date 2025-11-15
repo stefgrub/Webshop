@@ -29,10 +29,11 @@ public class Product {
 
     @Transient
     public String getImagePath() {
-        if (imageUrl == null || imageUrl.isBlank()) {
-            return "/img/placeholder.png";
+        String resolved = getImageUrlResolved();
+        if (resolved != null) {
+            return resolved;
         }
-        return "/img/" + imageUrl;
+        return "/img/placeholder.png";
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -62,6 +63,28 @@ public class Product {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    @Transient
+    public String getImageUrlResolved() {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return null;
+        }
+
+        String trimmed = imageUrl.trim();
+
+        // Externe URLs 1:1 übernehmen
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+            return trimmed;
+        }
+
+        // Bereits vollständige Pfade (z.B. /media/..., /images/...)
+        if (trimmed.startsWith("/")) {
+            return trimmed;
+        }
+
+        // Nur Dateiname -> wir gehen davon aus, dass es aus /media kommt
+        return "/media/" + trimmed;
+    }
 
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }

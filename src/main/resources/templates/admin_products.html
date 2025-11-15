@@ -26,7 +26,7 @@
                 <tbody>
                 <tr th:each="p : ${page.content}">
                     <td th:text="${p.id}">1</td>
-                    <td><img th:src="${p.imagePath}" th:alt="${p.name}" class="cover"/></td>
+                    <td> <img th:if="${p.imageUrlResolved}" th:src="${p.imageUrlResolved}" alt="Produktbild" class="product-image" loading="lazy"/></td>
                     <td th:text="${p.name}">Produktname</td>
                     <td th:text="${p.category != null ? p.category.name : 'Kategorie'}">Kategorie</td>
                     <td th:text="|${#numbers.formatDecimal(p.priceCents / 100.0, 1, 'COMMA', 2, 'POINT')} €|">0,00&nbsp;€</td>

@@ -29,7 +29,7 @@
     <section class="grid" th:if="${products}">
         <article class="product card hover" th:each="p : ${products.content}">
             <a class="media" th:href="@{/p/{slug}(slug=${p.slug})}">
-                <img th:src="${p.imagePath}" th:alt="${p.name}" class="cover"/>
+                <img th:src="${p.imagePath}" th:alt="${p.name}" class="cover" loading="lazy"/>
             </a>
             <div class="content">
                 <h3>

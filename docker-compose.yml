@@ -78,11 +78,11 @@ services:
 
     # Hinweis: Dein Basis-Image braucht curl oder wget für den Healthcheck!
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/actuator/health >/dev/null 2>&1 || wget -qO- http://127.0.0.1:8080/actuator/health >/dev/null 2>&1 || exit 1"]
-      interval: 15s
-      timeout: 5s
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      timeout: 3s
       retries: 5
-      start_period: 90s
+      start_period: 25s
 
     restart: unless-stopped
     networks: [webshop_net]

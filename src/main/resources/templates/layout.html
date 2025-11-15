@@ -57,6 +57,9 @@
                 <span sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/admin/maintenance}" class="link">Wartung</a>
                 </span>
+                <span sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/media}" class="nav-link">Medienverwaltung</a>
+                </span>
                 <a class="link" th:href="@{/}">Startseite</a>
             </div>
 

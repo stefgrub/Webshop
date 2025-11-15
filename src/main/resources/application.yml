@@ -1,8 +1,6 @@
 spring:
   datasource:
     url: jdbc:postgresql://db:5432/webshop
-
-
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 20
@@ -31,11 +29,22 @@ spring:
   thymeleaf:
     cache: true
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
 server:
   port: 8080
   error:
     include-message: always
     include-stacktrace: never
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: >
+      text/html,text/xml,text/plain,text/css,
+      text/javascript,application/javascript,application/json
 
 logging:
   pattern:
@@ -48,3 +57,6 @@ logging:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     com.example.shop.service.AdminNotificationService: DEBUG
+
+app:
+  media-dir: ${APP_MEDIA_DIR:/app/media}

@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -47,10 +49,16 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12, new SecureRandom());
     }
 
+    // 🔹 SessionRegistry für Session-Verwaltung (z.B. zum Rauswerfen von Benutzern)
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+
     // 🔹 Haupt-Sicherheitskonfiguration
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, SessionRegistry sessionRegistry) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         // Öffentliche Seiten + Healthcheck + Assets
@@ -63,7 +71,7 @@ public class SecurityConfig {
                                 "/register", "/verify", "/verify/resend",
                                 "/login", "/logout",
                                 "/favicon.ico", "/robots.txt", "/sitemap.xml",
-                                "/css/**", "/js/**", "/img/**", "/images/**",
+                                "/css/**", "/js/**", "/img/**", "/media/**", "/images/**",
                                 "/assets/**", "/fonts/**", "/webjars/**"
                         ).permitAll()
 
@@ -105,6 +113,7 @@ public class SecurityConfig {
                         .sessionFixation(session -> session.migrateSession())
                         .maximumSessions(3)
                         .maxSessionsPreventsLogin(false)
+                        .sessionRegistry(sessionRegistry)
                 )
 
                 // Sicherheitsheader
