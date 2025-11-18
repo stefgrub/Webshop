@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('WebShop – Startseite')}">
-    <link th:href="@{/css/site.css}" rel="stylesheet"/>
-</head>
+<head th:replace="~{layout :: head('WebShop – Startseite')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
 
@@ -28,8 +26,10 @@
     <!-- Produktgrid -->
     <section class="grid" th:if="${products}">
         <article class="product card hover" th:each="p : ${products.content}">
-            <a class="media" th:href="@{/p/{slug}(slug=${p.slug})}">
-                <img th:src="${p.imagePath}" th:alt="${p.name}" class="cover" loading="lazy"/>
+            <a class="media product-card-link" th:href="@{/p/{slug}(slug=${p.slug})}">
+                <div class="product-card-image">
+                    <img th:src="${p.imagePath}" th:alt="${p.name}" loading="lazy">
+                </div>
             </a>
             <div class="content">
                 <h3>

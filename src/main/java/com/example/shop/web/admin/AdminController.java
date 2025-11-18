@@ -11,6 +11,6 @@ public class AdminController {
     @GetMapping
     public String dashboard() {
         // Zeigt templates/admin_dashboard.html
-        return "admin_dashboard";
+        return "admin/dashboard";
     }
 }

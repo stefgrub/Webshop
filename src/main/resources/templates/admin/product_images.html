@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Produktbilder verwalten')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container my-4">
+    <h1 class="h3 mb-3">
+        Bilder für <span th:text="${product.name}">Produkt</span>
+    </h1>
+
+    <p>
+        <a th:href="@{/admin/products}" class="link">← Zurück zur Produktliste</a>
+        &nbsp;|&nbsp;
+        <a th:href="@{'/admin/products/' + ${product.id}}" class="link">Produkt bearbeiten</a>
+    </p>
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- Liste der bestehenden Bilder -->
+    <section class="mb-4">
+        <h2 class="h5">Vorhandene Bilder</h2>
+
+        <div th:if="${#lists.isEmpty(images)}" class="text-muted">
+            Noch keine Galerie-Bilder vorhanden.
+        </div>
+
+        <div th:if="${!#lists.isEmpty(images)}" class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Vorschau</th>
+                    <th>Bild-URL</th>
+                    <th>Sortierung</th>
+                    <th>Caption</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="img : ${images}">
+                    <td style="width: 120px;">
+                        <img th:if="${img.imageUrlResolved != null}"
+                             th:src="${img.imageUrlResolved}"
+                             alt="Preview"
+                             style="max-width: 100px; max-height: 80px; object-fit: cover;">
+                    </td>
+                    <td>
+                        <code th:text="${img.imageUrl}"></code><br/>
+                        <small class="text-muted" th:text="${img.imageUrlResolved}"></small>
+                    </td>
+                    <td th:text="${img.sortIndex}">0</td>
+                    <td th:text="${img.caption}">–</td>
+                    <td>
+                        <form th:action="@{'/admin/products/' + ${product.id} + '/images/' + ${img.id} + '/delete'}"
+                              method="post"
+                              class="d-inline js-delete-form">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Löschen
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Neues Bild hinzufügen -->
+    <section>
+        <h2 class="h5">Neues Bild hinzufügen</h2>
+
+        <form th:action="@{'/admin/products/' + ${product.id} + '/images'}"
+              method="post"
+              th:object="${newImage}"
+              class="card p-3">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="mb-3">
+                <label class="form-label">Bild-URL</label>
+                <input th:field="*{imageUrl}"
+                       class="form-control"
+                       placeholder="/media/… oder Dateiname oder https://…"
+                       required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Sortierindex</label>
+                <input type="number" th:field="*{sortIndex}" class="form-control" value="0">
+                <small class="text-muted">Kleinere Zahl = weiter vorne.</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Caption (optional)</label>
+                <input th:field="*{caption}" class="form-control" placeholder="z.B. 'Frontansicht'">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Bild hinzufügen</button>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

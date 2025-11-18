@@ -16,9 +16,7 @@ public class MaintenanceProps {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    public OffsetDateTime getEnd() {
-        return end;
-    }
+    public OffsetDateTime getEnd() {return end;}
     public void setEnd(OffsetDateTime end) {
         this.end = end;
     }

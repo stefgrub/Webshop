@@ -1,4 +1,3 @@
-// Modern WebShop UI – modern.js
 const THEME_KEY = "webshop_theme";
 function applyTheme(theme){ document.documentElement.setAttribute('data-theme', theme); }
 function loadTheme(){

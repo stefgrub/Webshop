@@ -1,7 +1,12 @@
 package com.example.shop.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.OffsetDateTime;
 
+@Setter
+@Getter
 public class MaintenanceInfo {
 
     private boolean active;
@@ -17,18 +22,6 @@ public class MaintenanceInfo {
         this.start = start;
         this.end = end;
     }
-
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
-
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-
-    public OffsetDateTime getStart() { return start; }
-    public void setStart(OffsetDateTime start) { this.start = start; }
-
-    public OffsetDateTime getEnd() { return end; }
-    public void setEnd(OffsetDateTime end) { this.end = end; }
 
     @Override public String toString() {
         return "MaintenanceInfo{active=" + active + ", message='" + message + "', start=" + start + ", end=" + end + '}';

@@ -1,5 +1,8 @@
 package com.example.shop.web.admin;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import com.example.shop.domain.Order;
 import com.example.shop.repo.OrderRepo;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +24,23 @@ public class AdminOrderController {
     // Übersicht (optional nach Status filtern)
     @GetMapping
     public String list(@RequestParam(name = "status", required = false) Order.Status selectedStatus,
+                       @RequestParam(defaultValue = "0") int page,
+                       @RequestParam(defaultValue = "20") int size,
                        Model model) {
-        final List<Order> list = (selectedStatus == null)
-                ? orders.findAllByOrderByCreatedAtDesc()
-                : orders.findByStatusOrderByCreatedAtDesc(selectedStatus);
 
-        model.addAttribute("orders", list);
+        // PageRequest: sortiere nach createdAt DESC
+        PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Order> p = (selectedStatus == null)
+                ? orders.findAll(pr)
+                : orders.findByStatus(selectedStatus, pr);
+
+        // Für das Template:
+        model.addAttribute("orders", p.getContent()); // wie bisher
+        model.addAttribute("page", p);                // für Pagination-Fragment
         model.addAttribute("selectedStatus", selectedStatus);
         model.addAttribute("statuses", Order.Status.values());
+
         return "admin/orders";
     }
 

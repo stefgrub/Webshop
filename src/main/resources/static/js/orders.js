@@ -1,12 +1,3 @@
-/**
- * /static/js/orders.js – Admin-Bestellübersicht (CSP-konform)
- * - Sendet application/x-www-form-urlencoded (passend zu Spring MVC)
- * - Nutzt die Controller-Routen:
- *     POST /admin/orders/{id}/status  (body: status=...)
- *     POST /admin/orders/cancel/{id}
- *     POST /admin/orders/delete/{id}
- */
-
 (function () {
   'use strict';
 

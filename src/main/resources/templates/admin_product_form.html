@@ -5,6 +5,12 @@
 <header th:replace="~{layout :: header}"></header>
 <main class="container">
     <h1 th:text="${product.id != null ? 'Produkt bearbeiten' : 'Produkt anlegen'}">Produkt anlegen</h1>
+
+    <div th:if="${product.id != null}" class="mb-3">
+        <a th:href="@{'/admin/products/' + ${product.id} + '/images'}" class="link">
+            🖼 Bildergalerie verwalten
+        </a>
+    </div>
     <form th:action="@{${product.id} != null ? '/admin/products/' + ${product.id} : '/admin/products'}"
           method="post"
           th:object="${product}"

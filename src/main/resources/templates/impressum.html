@@ -1,46 +1,88 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('Impressum – Demo Webshop')}"></head>
+<head th:replace="~{layout :: head('Impressum – Webshop')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
 
 <main class="container" style="max-width:800px;margin:2rem auto;">
-    <h1>Impressum (Demo)</h1>
+    <div class="language-switcher">
+        <a th:href="@{/impressum}" class="lang-btn" data-lang="de">🇩🇪Deutsch</a>
+        <a th:href="@{/impressum-en}" class="lang-btn" data-lang="en">🇪 English</a>
+    </div>
 
-    <p><strong>Hinweis:</strong> Dieser Webshop ist ein <strong>reines Lernprojekt</strong>
-        und dient ausschließlich zu Schulungs- und Demonstrationszwecken.
-        Es werden <strong>keine echten Produkte verkauft</strong> und
-        <strong>keine realen Kundendaten verarbeitet</strong>.</p>
+    <h1>Impressum</h1>
 
-    <h2>Angaben gemäß §5 ECG / §24 MedienG</h2>
+    <h2>Angaben gemäß § 5 ECG & § 14 UGB</h2>
     <p>
-        <strong>Projektbetreiber:</strong><br>
+        <strong>Betreiber der Website:</strong><br>
         Stefan Grubbauer<br>
-        Oberdorf 39<br>
-        8181 Mitterdorf an der Raab<br>
         Österreich<br>
-        <br>
-        <strong>Kontakt:</strong><br>
-        E-Mail: stefan.grubbauer@icloud.com<br>
+        E-Mail: support@viewwebshop.at
     </p>
 
-    <h2>Haftungsausschluss</h2>
-    <p>Da dieses Projekt nur zu Übungszwecken erstellt wurde,
-        übernehmen Betreiber oder Entwickler keinerlei Verantwortung
-        für die Richtigkeit, Vollständigkeit oder Aktualität der dargestellten Inhalte.</p>
+    <h2>Art der Website</h2>
+    <p>
+        Diese Website ist ein <strong>nicht-kommerzielles Webshop-Projekt</strong>.
+        Es handelt sich um eine <strong>Demo- und Testplattform</strong>, die ausschließlich
+        zur Übung und Weiterentwicklung von Web-Technologien dient
+        (Java, Spring Boot, HTML/CSS/JS usw.).
+    </p>
+    <p>
+        Die dargestellten Produkte sind teilweise <strong>fiktiv</strong> und dienen
+        nur zur Visualisierung der Shop-Funktionen. Es findet kein echter Verkauf statt.
+    </p>
+
+    <h2>Haftungshinweis</h2>
+    <p>
+        Trotz sorgfältiger inhaltlicher Kontrolle wird keine Haftung für die Richtigkeit,
+        Vollständigkeit oder Aktualität der Inhalte übernommen.
+        Da es sich um ein Lern- und Entwicklungsprojekt handelt, können Fehler oder
+        unvollständige Funktionen jederzeit auftreten.
+    </p>
+
+    <h2>Haftung für Links</h2>
+    <p>
+        Externe Links zu Webseiten Dritter werden regelmäßig nicht aktiv überprüft.
+        Für den Inhalt verlinkter Seiten sind ausschließlich deren Betreiber verantwortlich.
+    </p>
 
     <h2>Urheberrecht</h2>
-    <p>Alle im Rahmen dieses Projekts verwendeten Inhalte, Bilder und Texte
-        stammen aus frei verfügbaren Quellen oder wurden zu Lernzwecken selbst erstellt.</p>
+    <p>
+        Die Inhalte dieser Website – einschließlich Texte, Layout, Icons sowie
+        teilweise mit KI (OpenAI / ChatGPT) generierte Bilder – unterliegen dem
+        Urheberrecht bzw. den jeweiligen Lizenzbedingungen.
+    </p>
+    <p>
+        Die Nutzung, Vervielfältigung oder Weitergabe der Inhalte ist ohne
+        ausdrückliche Zustimmung nicht gestattet.
+    </p>
 
-    <h2>Rechtlicher Hinweis</h2>
-    <p>Dies ist kein echter Webshop. Es findet <strong>kein kommerzieller Verkauf</strong> statt.
-        Alle dargestellten Preise, Produkte und Daten sind fiktiv.</p>
+    <h2>KI-generierte Inhalte</h2>
+    <p>
+        Einige Illustrationen, Produktbilder und Designs wurden mithilfe von
+        <strong>OpenAI / ChatGPT</strong> erstellt.
+        Diese KI-basierten Inhalte dienen ausschließlich der Demonstration und
+        enthalten keine personenbezogenen oder realen Bilddaten.
+    </p>
+
+    <h2>Technische Umsetzung</h2>
+    <p>
+        Der Webshop wird technisch auf einem privaten Server betrieben
+        (Ubuntu Linux, Domain <strong>viewwebshop.at</strong>) und befindet sich
+        in aktiver Entwicklung.
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>
+        Bei Fragen oder Hinweisen erreichen Sie uns unter:<br>
+        <strong>support@viewwebshop.at</strong>
+    </p>
 
     <p style="margin-top:2rem;">
         <a th:href="@{/datenschutz}" style="color:#6aa7ff;">Zur Datenschutzerklärung</a>
     </p>
 </main>
+
 <footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

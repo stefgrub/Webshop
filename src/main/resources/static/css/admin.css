@@ -72,7 +72,7 @@ h1.admin-title {
 .card.admin-card.hover:hover {
   transform: translateY(-4px);
   background: var(--admin-primary);
-  color: #fff;
+  color: var(--admin-text);
   border-color: transparent;
   box-shadow: 0 16px 36px -12px rgba(79,70,229,.45);
 }
@@ -95,7 +95,7 @@ h1.admin-title {
   border: 1px solid var(--admin-primary);
   background: var(--admin-primary);
   color: #fff;
-  padding: .55rem .9rem;
+  padding: 5px 10px;
   border-radius: .65rem;
   font-weight: 600;
   line-height: 1.1;

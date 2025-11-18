@@ -5,15 +5,20 @@ import com.example.shop.repo.UserRepo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Controller
 @RequestMapping("/admin/users")
 public class AdminUserController {
 
     private final UserRepo users;
+    private final SessionRegistry sessionRegistry;
 
-    public AdminUserController(UserRepo users) {
+    public AdminUserController(UserRepo users, SessionRegistry sessionRegistry) {
         this.users = users;
+        this.sessionRegistry = sessionRegistry;
     }
 
     @GetMapping
@@ -34,8 +39,21 @@ public class AdminUserController {
         User user = users.findById(id).orElseThrow();
         user.setRole(role.toUpperCase());
         users.save(user);
+
+        expireSessionsForUser(user.getEmail());
         return "redirect:/admin/users";
     }
+
+    private void expireSessionsForUser(String username) {
+        sessionRegistry.getAllPrincipals().forEach(principal -> {
+            if (principal instanceof UserDetails ud && ud.getUsername().equals(username)) {
+                for (SessionInformation si : sessionRegistry.getAllSessions(principal, false)) {
+                    si.expireNow(); // Markiert Session als abgelaufen
+                }
+            }
+        });
+    }
+
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id) {

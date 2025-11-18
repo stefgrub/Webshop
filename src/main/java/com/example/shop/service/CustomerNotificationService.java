@@ -1,7 +1,6 @@
 package com.example.shop.service;
 
 import com.example.shop.domain.Order;
-import com.example.shop.domain.OrderItem;
 import com.example.shop.repo.OrderRepo;
 import jakarta.mail.internet.InternetAddress;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.text.NumberFormat;
 import java.util.Locale;
 
 @Service

@@ -1,4 +1,3 @@
-// src/main/resources/static/js/maintenance.js
 (function () {
   'use strict';
 

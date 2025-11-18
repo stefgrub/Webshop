@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Privacy Policy – Webshop')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container" style="max-width:800px;margin:2rem auto;">
+    <h1>Privacy Policy</h1>
+
+    <div class="language-switcher" style="margin-bottom:1.5rem;">
+        <a th:href="@{/datenschutz}" class="lang-btn" data-lang="de">🇪🇩Deutsch</a>
+        <a th:href="@{/datenschutz-en}" class="lang-btn" data-lang="en">🇪 English</a>
+    </div>
+
+    <p>
+        Protecting your personal data is very important to us.
+        This privacy policy explains how personal data is processed when using this webshop.
+        The webshop is currently under development and also serves as a learning and test project.
+    </p>
+
+    <h2>1. Controller</h2>
+    <p>
+        Stefan Grubbauer<br>
+        Austria<br>
+        Email: support@viewwebshop.at
+    </p>
+
+    <h2>2. Purpose of this Website</h2>
+    <p>
+        This webshop is under active development and is continuously being improved.
+        Many functions (e.g. cart, orders, user accounts) are used for demonstration
+        and testing only.
+        The products shown are partially <strong>fictional</strong> and are used solely to present
+        webshop features.
+    </p>
+
+    <h2>3. Use of AI-generated Images & Content</h2>
+    <p>
+        Some product images and graphics on this webshop were created with
+        <strong>OpenAI / ChatGPT (image generation)</strong>.
+        These AI-generated images do not contain personal data and are not based on
+        uploaded photos of real persons.
+    </p>
+    <p>
+        All AI-based images are purely illustrative and do not represent real products.
+    </p>
+
+    <h2>4. Processing of Personal Data</h2>
+    <p>
+        When you visit this website, only the data that is technically necessary
+        to provide the service is processed. This includes in particular:
+    </p>
+    <ul>
+        <li>IP address (shortened or anonymised where possible)</li>
+        <li>Date and time of access</li>
+        <li>Visited pages (URL, path)</li>
+        <li>Browser and device information</li>
+    </ul>
+
+    <p>
+        This data is automatically stored in server log files for security reasons
+        (e.g. error analysis). There is no personal evaluation of this data.
+    </p>
+
+    <h2>5. No Real Orders / No Data Transfer</h2>
+    <p>
+        Even though the webshop includes order functionality, any data entered is
+        stored and processed for <strong>testing purposes only</strong> and is <strong>not</strong>:
+    </p>
+    <ul>
+        <li>used for advertising purposes,</li>
+        <li>used for profiling,</li>
+        <li>transferred to third parties.</li>
+    </ul>
+
+    <p>
+        There is no real contract processing.
+        All products and prices displayed are examples and not binding offers.
+    </p>
+
+    <h2>6. Cookies</h2>
+    <p>
+        This website only uses technically necessary cookies, for example:
+    </p>
+    <ul>
+        <li>session-related cookies (e.g. for cart or login simulation)</li>
+        <li>a setting for the light/dark theme (design preference)</li>
+    </ul>
+    <p>
+        <strong>No tracking or analytics cookies</strong> (such as Google Analytics) are used.
+    </p>
+
+    <h2>7. Contact Forms / Inputs on the Webshop</h2>
+    <p>
+        If you voluntarily enter data (for example in a contact form or during a
+        test order), this data is processed only within the webshop and is not
+        forwarded to external services.
+    </p>
+
+    <h2>8. Security</h2>
+    <p>
+        The webshop uses HTTPS to transmit data in an encrypted form.
+        However, as this is a development project, full security cannot be guaranteed
+        at all times, despite careful setup.
+    </p>
+
+    <h2>9. Rights under GDPR</h2>
+    <p>
+        Since no real, permanent processing of personal data takes place in regular
+        operation, user rights such as access, deletion or rectification are only
+        applicable in a limited way.
+        If you still have concerns about data stored as part of testing, you can
+        contact us at any time and we will review and delete such data where applicable.
+    </p>
+
+    <h2>10. Changes to this Privacy Policy</h2>
+    <p>
+        This privacy policy may be updated in the future if functions of the webshop
+        are extended or changed.
+    </p>
+
+    <p style="margin-top:2rem;">
+        <a th:href="@{/impressum-en}" style="color:#6aa7ff;">Imprint</a>
+    </p>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

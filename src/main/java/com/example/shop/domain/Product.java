@@ -4,26 +4,41 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "products")
 public class Product {
 
+    // --- getters/setters ---
+    @Setter
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Setter
+    @Getter
     @NotBlank private String name;
 
+    @Setter
+    @Getter
     @NotBlank private String slug;
 
     @Min(0) private int priceCents;
 
+    @Setter
+    @Getter
     @Size(max=2000) private String description;
 
+    @Setter
+    @Getter
     @Column(nullable = false)
     private Integer stock;
 
+    @Setter
+    @Getter
     @Column(name = "image_url")
     private String imageUrl;
 
@@ -36,33 +51,16 @@ public class Product {
         return "/img/placeholder.png";
     }
 
+    @Setter
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
     public Product() {}
 
-    // --- getters/setters ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getSlug() { return slug; }
-    public void setSlug(String slug) { this.slug = slug; }
-
     public Integer getPriceCents() { return priceCents; }
     public void setPriceCents(Integer priceCents) { this.priceCents = priceCents; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
     @Transient
     public String getImageUrlResolved() {
@@ -86,12 +84,16 @@ public class Product {
         return "/media/" + trimmed;
     }
 
-    public Category getCategory() { return category; }
-    public void setCategory(Category category) { this.category = category; }
+    @Setter
+    @Getter
+    @OneToMany(mappedBy = "product",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true)
+    @OrderBy("sortIndex ASC, id ASC")
+    private java.util.List<ProductImage> images = new java.util.ArrayList<>();
 
-    public java.util.List<OrderItem> getOrderItems() { return orderItems; }
-    public void setOrderItems(java.util.List<OrderItem> orderItems) { this.orderItems = orderItems; }
-
+    @Setter
+    @Getter
     @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private java.util.List<OrderItem> orderItems = new java.util.ArrayList<>();
 

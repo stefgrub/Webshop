@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Medienverwaltung')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">Medienverwaltung</h1>
+        <p class="text-muted mb-0">Bilder hochladen, ansehen, herunterladen und löschen.</p>
+    </div>
+
+    <!-- Alerts -->
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+    <!-- Upload-Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form th:action="@{/admin/media/upload}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Bild auswählen</label>
+                    <input type="file" id="file" name="file" accept="image/*" class="form-control" required>
+                    <small class="form-text text-muted">Erlaubte Dateitypen: PNG, JPG, JPEG, WEBP, GIF · max. 5 MB</small>
+                </div>
+                <button type="submit" class="btn btn-primary">Hochladen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dateien-Liste -->
+    <section>
+        <h2 class="h5 mb-3">Vorhandene Medien</h2>
+
+        <div th:if="${#lists.isEmpty(files)}" class="text-muted">Noch keine Dateien vorhanden.</div>
+
+        <div th:if="${!#lists.isEmpty(files)}" class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr>
+                    <th>Vorschau</th>
+                    <th>Dateiname</th>
+                    <th>Größe</th>
+                    <th>Zuletzt geändert</th>
+                    <th>Aktionen</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="f : ${files}">
+                    <td style="width: 120px;">
+                        <img th:src="${f.url}" alt="Preview" style="max-width: 100px; max-height: 80px; object-fit: cover;">
+                    </td>
+                    <td>
+                        <div th:text="${f.filename}"></div>
+                        <small class="text-muted" th:text="${f.url}"></small>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(f.size / 1024.0, 1, 1)} + ' KB'"></td>
+                    <td th:text="${#temporals.format(f.lastModified, 'dd.MM.yyyy HH:mm')}"></td>
+                    <td>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a th:href="${f.url}" class="btn btn-outline-secondary" download>Download</a>
+
+                            <button type="button" class="btn btn-outline-secondary js-copy-url" th:attr="data-url=${f.url}">URL kopieren</button>
+
+                            <form th:action="@{/admin/media/delete}" method="post" class="d-inline js-delete-form">
+                                <input type="hidden" name="filename" th:value="${f.filename}">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-outline-danger">Löschen</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/admin_media.js}" defer></script>
+</body>
+</html>

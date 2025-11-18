@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="de" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="de" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)" th:inline="none">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -27,26 +28,39 @@
 </head>
 
 <body>
-<section th:if="${announcements != null}">
-    <div th:each="a : ${announcements}" class="alert" th:classappend="' ' + ${a.levelCss()}">
-        <strong th:text="${a.title}">Titel</strong>
-        <span th:utext="${a.message}">Nachricht</span>
-        <a th:if="${a.linkUrl}" th:href="${a.linkUrl}" class="btn small">Mehr</a>
-    </div>
-</section>
+
 <header th:fragment="header">
-    <div th:if="${maintenance != null and maintenance.enabled}" id="maintFloat" class="maint-banner" th:classappend="${maintenance != null and maintenance.homepageOnly} ? ' only-home'">
+
+    <!-- Announcements -->
+    <section th:if="${announcements != null}">
+        <div th:each="a : ${announcements}"
+             class="alert"
+             th:classappend="' ' + ${a.levelCss()}">
+            <strong th:text="${a.title}">Titel</strong>
+            <span th:utext="${a.message}">Nachricht</span>
+            <a th:if="${a.linkUrl}" th:href="${a.linkUrl}" class="btn small">Mehr</a>
+        </div>
+    </section>
+
+    <!-- Wartungsbanner -->
+    <div th:if="${maintenance != null and maintenance.enabled}"
+         id="maintFloat"
+         class="maint-banner"
+         th:classappend="${maintenance != null and maintenance.homepageOnly} ? ' only-home'">
         <div class="maint-inner">
             <strong th:text="${maintenance.message}">Wartungsarbeiten …</strong>
             <span th:if="${maintenance.end != null}">
-          &nbsp;(bis
-          <span th:text="${#temporals.format(maintenance.end, 'dd.MM.yyyy HH:mm')}">00.00.0000 00:00</span>
-          )
-        </span>
+              &nbsp;(bis
+              <span th:text="${#temporals.format(maintenance.end, 'dd.MM.yyyy HH:mm')}">
+                  00.00.0000 00:00
+              </span>
+              )
+            </span>
             <button type="button" class="maint-close" aria-label="Banner schließen">×</button>
         </div>
     </div>
 
+    <!-- Navigation -->
     <nav class="nav glass" x-data="{ open:false }" aria-label="Hauptnavigation">
         <div class="container">
             <div class="nav-left flex align-center gap-sm">
@@ -58,13 +72,17 @@
                     <a th:href="@{/admin/maintenance}" class="link">Wartung</a>
                 </span>
                 <span sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/media}" class="nav-link">Medienverwaltung</a>
+                    <a th:href="@{/admin/media}" class="link">Medienverwaltung</a>
                 </span>
                 <a class="link" th:href="@{/}">Startseite</a>
             </div>
 
             <!-- Suche (Desktop) -->
-            <form class="search hide-sm" th:action="@{/}" method="get" role="search" aria-label="Produktsuche">
+            <form class="search hide-sm"
+                  th:action="@{/}"
+                  method="get"
+                  role="search"
+                  aria-label="Produktsuche">
                 <input type="search" name="q" th:value="${q}" placeholder="Suche Produkte…"/>
                 <button type="submit" class="btn">Suchen</button>
             </form>
@@ -72,7 +90,11 @@
             <!-- Aktionen (Desktop) -->
             <div class="nav-right hide-sm">
                 <a th:href="@{/cart}" class="link" aria-label="Warenkorb">🛒 Warenkorb</a>
-                <button class="theme-transition" type="button" id="themeToggle" title="Theme umschalten" aria-label="Theme umschalten">🌓</button>
+                <button class="theme-transition"
+                        type="button"
+                        id="themeToggle"
+                        title="Theme umschalten"
+                        aria-label="Theme umschalten">🌓</button>
 
                 <span th:if="${#authorization.expression('isAuthenticated()')}">
                     <span class="hello">Hi, <b th:text="${#authentication.name}">user</b></span>
@@ -88,12 +110,25 @@
             </div>
 
             <!-- Burger (nur Mobile) -->
-            <button class="burger only-sm" @click="open = !open" :aria-expanded="open ? 'true' : 'false'" aria-controls="mobileMenu" aria-label="Menü öffnen/schließen">☰</button>
+            <button class="burger only-sm"
+                    @click="open = !open"
+                    :aria-expanded="open ? 'true' : 'false'"
+                    aria-controls="mobileMenu"
+                    aria-label="Menü öffnen/schließen">
+                ☰
+            </button>
         </div>
 
         <!-- Mobile-Menü -->
-        <div id="mobileMenu" class="mobile-menu only-sm" :class="{ 'open': open }" x-cloak>
-            <form class="search" th:action="@{/}" method="get" role="search" aria-label="Produktsuche (mobil)">
+        <div id="mobileMenu"
+             class="mobile-menu only-sm"
+             :class="{ 'open': open }"
+             x-cloak>
+            <form class="search"
+                  th:action="@{/}"
+                  method="get"
+                  role="search"
+                  aria-label="Produktsuche (mobil)">
                 <input type="search" name="q" th:value="${q}" placeholder="Suche Produkte…"/>
                 <button type="submit" class="btn">Suchen</button>
             </form>
@@ -118,7 +153,7 @@
     </nav>
 </header>
 
-
+<!-- Optionales zentrales Content-Fragment (nur benutzen, wenn du es explizit einbindest) -->
 <main class="container" th:fragment="content">
 </main>
 
@@ -145,5 +180,6 @@
 <div th:replace="~{fragments :: _toasts}"></div>
 <div th:replace="~{fragments :: _cartDrawer}"></div>
 <div th:replace="~{fragments :: _liveSearch}"></div>
+
 </body>
 </html>

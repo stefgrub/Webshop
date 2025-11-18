@@ -31,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.removeChild(tmp);
     }
 
-    // Delete-Bestätigung
-    document.body.addEventListener('submit', function (event) {
+    // Einzel-Löschen: Bestätigung
+    document.body.addEventListener('submitdel', function (event) {
         const form = event.target;
         if (!form.matches('.js-delete-form')) return;
 
@@ -40,6 +40,35 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!ok) {
             event.preventDefault();
         }
+    });
+
+    // Bulk-Delete: Bestätigung
+    document.body.addEventListener('submit', function (event) {
+        const form = event.target;
+        if (!form.matches('#bulkDeleteForm')) return;
+
+        const anyChecked = !!form.querySelector('.js-select-item:checked');
+        if (!anyChecked) {
+            alert('Bitte wähle mindestens eine Datei aus.');
+            event.preventDefault();
+            return;
+        }
+
+        const ok = window.confirm('Ausgewählte Dateien wirklich löschen?');
+        if (!ok) {
+            event.preventDefault();
+        }
+    });
+
+    // Select All
+    document.body.addEventListener('change', function (event) {
+        const master = event.target.closest('.js-select-all');
+        if (!master) return;
+
+        const checked = master.checked;
+        document.querySelectorAll('.js-select-item').forEach(function (cb) {
+            cb.checked = checked;
+        });
     });
 
 });

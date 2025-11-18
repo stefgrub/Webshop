@@ -14,21 +14,54 @@
         <form action="#" th:action="@{/checkout}" method="post" class="checkout-form">
             <div class="grid">
                 <label>Vollständiger Name
-                    <input type="text" name="fullName" required/>
+                    <input type="text"
+                           id="fullName"
+                           name="fullName"
+                           required
+                           minlength="3"
+                           autocomplete="name"/>
                 </label>
                 <label>Straße und Hausnummer
-                    <input type="text" name="street" required/>
+                    <input type="text"
+                           id="street"
+                           name="street"
+                           required
+                           minlength="3"
+                           autocomplete="street-address"/>
                 </label>
                 <label>PLZ
-                    <input type="text" name="postalCode" required/>
+                    <input type="text"
+                           id="postalCode"
+                           name="postalCode"
+                           required
+                           inputmode="numeric"
+                           autocomplete="postal-code"/>
                 </label>
                 <label>Ort
-                    <input type="text" name="city" required/>
+                    <input type="text"
+                           id="city"
+                           name="city"
+                           required
+                           minlength="2"
+                           autocomplete="address-level2"/>
                 </label>
                 <label>Land
-                    <input type="text" name="country" value="Deutschland" required/>
+                    <input type="text"
+                           id="country"
+                           name="country"
+                           value="Deutschland"
+                           required
+                           autocomplete="country-name"/>
                 </label>
             </div>
+
+            <div class="field" style="margin-top: 1rem;">
+                <label>
+                    <input type="checkbox" id="rememberAddress" checked>
+                    Lieferadresse für das nächste Mal merken
+                </label>
+            </div>
+
             <h2>Bestellübersicht</h2>
             <table class="table">
                 <thead>
@@ -54,6 +87,7 @@
                 </tr>
                 </tfoot>
             </table>
+
             <div class="actions">
                 <input type="hidden" name="_csrf" th:if="${_csrf != null}" th:value="${_csrf?.token}" />
                 <button type="submit" class="btn primary">🛍️ Jetzt kaufen</button>
@@ -63,5 +97,6 @@
     </section>
 </main>
 <footer th:replace="~{layout :: footer}"></footer>
+<script th:src="@{/js/checkout-autofill.js}"></script>
 </body>
 </html>

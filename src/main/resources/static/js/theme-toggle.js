@@ -2,10 +2,11 @@
   'use strict';
 
   var KEY = 'webshop_theme';
+  var LANG_KEY = 'webshop_lang'; // 🔹 NEU: Sprache
   var DOC = document.documentElement;
 
   /**
-   * Interne Helper
+   * Interne Helper (Theme)
    */
   function setThemeAttr(theme) {
     var t = theme === 'dark' ? 'dark' : 'light';
@@ -99,15 +100,72 @@
   }
 
   /**
+   * 🔹 Sprach-Helper
+   */
+  function saveLang(lang) {
+    if (!lang) return;
+    if (lang !== 'de' && lang !== 'en') return;
+    try { localStorage.setItem(LANG_KEY, lang); } catch (_) {}
+  }
+
+  function readSavedLang() {
+    try {
+      var v = localStorage.getItem(LANG_KEY);
+      return (v === 'de' || v === 'en') ? v : null;
+    } catch (_) { return null; }
+  }
+
+  // Falls noch keine Sprache gespeichert ist -> aus <html lang="..."> übernehmen
+  function initLangFromHtml() {
+    if (readSavedLang() != null) return;
+    var htmlLang = (DOC.lang || '').toLowerCase();
+    if (htmlLang === 'de' || htmlLang === 'en') {
+      saveLang(htmlLang);
+    }
+  }
+
+  /**
+   * 🔹 Auto-Redirect für Impressum/Datenschutz je nach Sprache
+   */
+  function handleLegalAutoRedirect() {
+    var savedLang = readSavedLang();
+    if (!savedLang) return;
+
+    var path = window.location.pathname;
+
+    var isImpressum = (path === '/impressum' || path === '/impressum-en');
+    var isDatenschutz = (path === '/datenschutz' || path === '/datenschutz-en');
+
+    if (!isImpressum && !isDatenschutz) return;
+
+    // EN bevorzugt
+    if (savedLang === 'en') {
+      if (path === '/impressum') {
+        window.location.replace('/impressum-en');
+      } else if (path === '/datenschutz') {
+        window.location.replace('/datenschutz-en');
+      }
+    }
+
+    // DE bevorzugt
+    if (savedLang === 'de') {
+      if (path === '/impressum-en') {
+        window.location.replace('/impressum');
+      } else if (path === '/datenschutz-en') {
+        window.location.replace('/datenschutz');
+      }
+    }
+  }
+
+  /**
    * DOM Ready
    */
   document.addEventListener('DOMContentLoaded', function () {
-    // Hier NICHT erneut initial setzen (das macht das Head-Boot-Snippet schon vor dem Paint),
-    // sondern nur Buttons verdrahten + State spiegeln.
+    // Theme-Buttons initialisieren
     var theme = currentTheme();
     reflectButtons(theme);
 
-    // Buttons anklemmen
+    // Theme-Buttons anklemmen
     var btn = document.getElementById('themeToggle');
     if (btn) btn.addEventListener('click', function (e) {
       e.preventDefault();
@@ -122,6 +180,22 @@
 
     // Systemwechsel beachten, falls kein explizites User-Setting
     listenSystemChanges();
+
+    // 🔹 Sprache initial aus <html lang> ableiten (falls noch nicht gesetzt)
+    initLangFromHtml();
+
+    // 🔹 Klicks auf Language-Links verfolgen:
+    // z. B. <a data-lang="de">Deutsch</a> / <a data-lang="en">English</a>
+    document.body.addEventListener('click', function (e) {
+      var link = e.target.closest('[data-lang]');
+      if (!link) return;
+      var lang = link.getAttribute('data-lang');
+      saveLang(lang);
+      // Kein Redirect hier, der Link selbst macht den Seitenwechsel
+    });
+
+    // 🔹 Auto-Redirect für Impressum/Datenschutz nach gespeicherter Sprache
+    handleLegalAutoRedirect();
   });
 
 })();

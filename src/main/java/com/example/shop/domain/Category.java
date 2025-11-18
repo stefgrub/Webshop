@@ -1,11 +1,16 @@
 package com.example.shop.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "categories")
 public class Category {
 
+    // --- getters/setters ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,13 +23,4 @@ public class Category {
 
     public Category() {}
 
-    // --- getters/setters ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getSlug() { return slug; }
-    public void setSlug(String slug) { this.slug = slug; }
 }

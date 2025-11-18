@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:class="http://www.w3.org/1999/xhtml" lang="de">
 <head th:replace="~{layout :: head('Admin – Bestelldetails')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
@@ -41,7 +41,7 @@
             </tbody>
         </table>
 
-        <p class:"text-right fw-bold">
+        <p class=text-right>
         Gesamtbetrag:
         <span th:text="${#numbers.formatDecimal(order.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')} + ' €'"></span>
         </p>

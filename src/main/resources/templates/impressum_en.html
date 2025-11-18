@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Imprint – Webshop')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container" style="max-width:800px;margin:2rem auto;">
+    <div class="language-switcher">
+        <a th:href="@{/impressum}" class="lang-btn" data-lang="en">🇪 English</a>
+        <a th:href="@{/impressum-en}" class="lang-btn" data-lang="de">🇩🇪German</a>
+    </div>
+
+    <h1>Imprint</h1>
+
+    <h2>Website Operator</h2>
+    <p>
+        Stefan Grubbauer<br>
+        Austria<br>
+        Email: support@viewwebshop.at
+    </p>
+
+    <h2>Purpose of This Website</h2>
+    <p>
+        This website is a <strong>non-commercial webshop project</strong>.
+        It serves as a <strong>demo and learning platform</strong> to practice and develop
+        web technologies (Java, Spring Boot, HTML/CSS/JS, etc.).
+    </p>
+    <p>
+        The products displayed are partially <strong>fictional</strong> and are intended solely
+        to demonstrate the webshop functions.
+        No real purchases or sales take place.
+    </p>
+
+    <h2>Liability Notice</h2>
+    <p>
+        Despite careful content control, no liability is assumed for the accuracy,
+        completeness or timeliness of the content.
+        As this is a development project, errors or incomplete functions may occur.
+    </p>
+
+    <h2>External Links</h2>
+    <p>
+        This website may contain links to external third-party websites.
+        The operator has no influence over their content, and is therefore not liable
+        for external content. Responsibility lies solely with the respective operators.
+    </p>
+
+    <h2>Copyright</h2>
+    <p>
+        All content on this website — including text, layout, icons and
+        some AI-generated images created with OpenAI / ChatGPT — is protected by
+        copyright or respective license agreements.
+    </p>
+    <p>
+        Use, reproduction, or distribution of content is not permitted without
+        explicit permission.
+    </p>
+
+    <h2>AI-Generated Content</h2>
+    <p>
+        Some illustrations, product images and visual elements were created using
+        <strong>OpenAI / ChatGPT</strong>.
+        These AI-generated elements are purely illustrative and do not contain any
+        personal or real photo data.
+    </p>
+
+    <h2>Technical Implementation</h2>
+    <p>
+        This webshop is hosted on a private server
+        (Ubuntu Linux, domain <strong>viewwebshop.at</strong>)
+        and is under active development.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+        For inquiries or feedback, please contact:<br>
+        <strong>support@viewwebshop.at</strong>
+    </p>
+
+    <p style="margin-top:2rem;">
+        <a th:href="@{/datenschutz-en}" style="color:#6aa7ff;">Privacy Policy</a>
+    </p>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

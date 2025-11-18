@@ -1,53 +1,122 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('Datenschutzerklärung – Demo Webshop')}"></head>
+<head th:replace="~{layout :: head('Datenschutzerklärung – Webshop')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
-<main class="container" style="max-width:800px;margin:2rem auto;">
-    <h1>Datenschutzerklärung (Demo)</h1>
 
-    <p><strong>Hinweis:</strong> Diese Website ist ein <strong>nicht-kommerzielles Lernprojekt</strong>.
-        Es werden keine echten personenbezogenen Daten verarbeitet oder an Dritte weitergegeben.</p>
+<main class="container" style="max-width:800px;margin:2rem auto;">
+    <div class="language-switcher">
+        <a th:href="@{/datenschutz}" class="lang-btn" data-lang="de">🇩🇪Deutsch</a>
+        <a th:href="@{/datenschutz-en}" class="lang-btn" data-lang="en">🇪 English</a>
+    </div>
+
+    <h1>Datenschutzerklärung</h1>
+
+    <p>Der Schutz Ihrer persönlichen Daten ist uns ein besonderes Anliegen.
+        Diese Datenschutzerklärung informiert Sie darüber, wie auf diesem Webshop
+        personenbezogene Daten verarbeitet werden. Der Webshop befindet sich derzeit
+        in Entwicklung und dient unter anderem als Lern- und Testprojekt.</p>
 
     <h2>1. Verantwortlicher</h2>
     <p>
         Stefan Grubbauer<br>
-        Oberdorf 39<br>
-        8181 Mitterdorf an der Raab<br>
         Österreich<br>
-        E-Mail: stefan.grubbauer@icloud.com
+        E-Mail: support@viewwebshop.at
     </p>
 
-    <h2>2. Zweck des Projekts</h2>
-    <p>Dieses Projekt dient ausschließlich der technischen und gestalterischen Übung
-        im Rahmen von Softwareentwicklung (z.&nbsp;B. Java, Spring Boot, Thymeleaf).</p>
+    <h2>2. Zweck der Website</h2>
+    <p>
+        Dieser Webshop befindet sich im Aufbau und wird laufend erweitert.
+        Zahlreiche Funktionen (z. B. Warenkorb, Bestellung, Benutzerkonten)
+        dienen Demonstrations- und Testzwecken.
+        Die angezeigten Produkte sind teilweise **fiktiv** und dienen ausschließlich
+        zur Präsentation der Webshop-Funktionen.
+    </p>
 
-    <h2>3. Speicherung von Daten</h2>
-    <p>Alle eingegebenen Daten (z.&nbsp;B. Test-Login, Bestellformular) werden
-        <strong>nicht dauerhaft gespeichert</strong> und ausschließlich lokal zu Testzwecken verarbeitet.</p>
+    <h2>3. Verwendete Bilder & KI-generierte Inhalte</h2>
+    <p>
+        Einige Produktbilder und Grafiken auf diesem Webshop wurden mittels
+        **OpenAI / ChatGPT (Image Generation)** erstellt.
+        Diese KI-generierten Bilder enthalten keine personenbezogenen Daten und
+        basieren nicht auf hochgeladenen oder echten Personenfotos.
+    </p>
+    <p>
+        Sämtliche KI-Bilder sind rein illustrativ und haben keinen realen Produktbezug.
+    </p>
 
-    <h2>4. Cookies</h2>
-    <p>Diese Website kann technisch notwendige Cookies verwenden,
-        um grundlegende Funktionen (z.&nbsp;B. Sitzungsverwaltung) zu simulieren.
-        Diese Cookies sind rein lokal und dienen nur zu Testzwecken.</p>
+    <h2>4. Verarbeitung personenbezogener Daten</h2>
+    <p>
+        Beim Besuch der Website werden nur jene Daten verarbeitet, die technisch
+        notwendig sind, um den Dienst bereitzustellen. Dazu zählen:
+    </p>
+    <ul>
+        <li>IP-Adresse (gekürzt bzw. anonymisiert, wenn möglich)</li>
+        <li>Datum und Uhrzeit des Zugriffs</li>
+        <li>Aufgerufene Seiten</li>
+        <li>Browser- und Geräteinformationen</li>
+    </ul>
 
-    <h2>5. Keine Weitergabe an Dritte</h2>
-    <p>Es erfolgt keine Übermittlung von Daten an externe Anbieter oder Dienste.
-        Auch keine Analyse- oder Trackingdienste (z.&nbsp;B. Google Analytics) werden eingesetzt.</p>
+    <p>
+        Diese Daten werden aus Sicherheitsgründen (z. B. zur Fehleranalyse) automatisch
+        im Server-Log gespeichert. Eine personenbezogene Auswertung findet nicht statt.
+    </p>
 
-    <h2>6. Sicherheit</h2>
-    <p>Das Projekt nutzt nach Möglichkeit eine HTTPS-Verbindung.
-        Dennoch wird keine Garantie für vollständige Datensicherheit übernommen,
-        da es sich um ein Lernprojekt handelt.</p>
+    <h2>5. Keine echten Bestellungen / Keine Weitergabe</h2>
+    <p>
+        Obwohl der Webshop Bestellfunktionen enthält, werden eingegebene Daten
+        ausschließlich zu Testzwecken gespeichert und NICHT:
+    </p>
+    <ul>
+        <li>zu Werbezwecken genutzt,</li>
+        <li>zu Profiling-Zwecken eingesetzt,</li>
+        <li>an Dritte weitergegeben.</li>
+    </ul>
 
-    <h2>7. Rechte der Nutzer</h2>
-    <p>Da keine personenbezogenen Daten im Sinne der DSGVO verarbeitet werden,
-        bestehen keine Ansprüche auf Auskunft, Berichtigung oder Löschung.</p>
+    <p>
+        Es findet keine tatsächliche Vertragsabwicklung statt.
+        Alle dargestellten Produkte und Preise sind beispielhaft.
+    </p>
+
+    <h2>6. Cookies</h2>
+    <p>
+        Die Website verwendet ausschließlich technisch notwendige Cookies
+        (z. B. zur Sitzungsverwaltung oder zur Speicherung der Theme-Auswahl
+        für Hell/Dunkelmodus).
+        Es werden **keine Tracking- oder Analyse-Cookies** eingesetzt.
+    </p>
+
+    <h2>7. Kontaktformulare / Eingaben im Webshop</h2>
+    <p>
+        Wenn Sie freiwillig Daten eingeben (z. B. im Kontaktformular oder
+        während einer Testbestellung), werden diese ausschließlich innerhalb
+        des Webshops verarbeitet und nicht an externe Dienste übermittelt.
+    </p>
+
+    <h2>8. Sicherheit</h2>
+    <p>
+        Der Webshop nutzt HTTPS, um Daten verschlüsselt zu übertragen.
+        Trotz aller Maßnahmen kann für eine vollständige Sicherheit nicht
+        garantiert werden, da es sich um ein Entwicklungsprojekt handelt.
+    </p>
+
+    <h2>9. Rechte laut DSGVO</h2>
+    <p>
+        Da keine echte personenbezogene Datenerfassung stattfindet, können
+        Benutzerrechte wie Auskunft, Löschung oder Berichtigung nur auf Anfrage
+        manuell geprüft und umgesetzt werden.
+    </p>
+
+    <h2>10. Änderungen dieser Datenschutzerklärung</h2>
+    <p>
+        Diese Datenschutzerklärung wird bei Bedarf aktualisiert, wenn Funktionen
+        im Webshop erweitert oder geändert werden.
+    </p>
 
     <p style="margin-top:2rem;">
         <a th:href="@{/impressum}" style="color:#6aa7ff;">Zum Impressum</a>
     </p>
 </main>
+
 <footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>
