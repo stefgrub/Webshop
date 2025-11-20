@@ -1,6 +1,7 @@
 package com.example.shop.config;
 
 import com.example.shop.repo.UserRepo;
+import com.example.shop.security.RegistrationRateLimitFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,9 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -27,20 +29,31 @@ public class SecurityConfig {
         this.users = users;
     }
 
-    // 🔹 Benutzer aus DB laden
+    // 🔹 Benutzer aus DB laden + nur verifizierte E-Mails zulassen
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> users.findByEmail(username)
-                .map(u -> {
-                    String role = (u.getRole() == null) ? "USER" : u.getRole();
-                    UserDetails ud = org.springframework.security.core.userdetails.User
-                            .withUsername(u.getEmail())
-                            .password(u.getPasswordHash())
-                            .roles(role)
-                            .build();
-                    return ud;
-                })
-                .orElseThrow(() -> new UsernameNotFoundException("Benutzer nicht gefunden: " + username));
+        return username -> {
+            String normalized = username == null ? "" : username.trim().toLowerCase();
+
+            var user = users.findByEmailIgnoreCase(normalized)
+                    .orElseThrow(() -> new UsernameNotFoundException("Unbekannter Benutzer"));
+
+            if (!user.isEmailVerified()) {
+                throw new UsernameNotFoundException("E-Mail ist noch nicht verifiziert");
+            }
+
+            String role = (user.getRole() == null || user.getRole().isBlank())
+                    ? "USER"
+                    : user.getRole();
+
+            UserDetails ud = org.springframework.security.core.userdetails.User
+                    .withUsername(user.getEmail())
+                    .password(user.getPasswordHash())
+                    .roles(role)
+                    .build();
+
+            return ud;
+        };
     }
 
     // 🔹 Passwort-Encoder
@@ -49,22 +62,22 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12, new SecureRandom());
     }
 
-    // 🔹 SessionRegistry für Session-Verwaltung (z.B. zum Rauswerfen von Benutzern)
+    // 🔹 SessionRegistry
     @Bean
     public SessionRegistry sessionRegistry() {
         return new SessionRegistryImpl();
     }
 
-
     // 🔹 Haupt-Sicherheitskonfiguration
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, SessionRegistry sessionRegistry) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   SessionRegistry sessionRegistry,
+                                                   RegistrationRateLimitFilter registrationRateLimitFilter) throws Exception {
+
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Öffentliche Seiten + Healthcheck + Assets
                         .requestMatchers(
-                                "/maintenance", "/maintenance/**",
-                                "/error", "/error/**",
+                                "/maintenance", "/maintenance/**", "/error", "/error/**",
                                 "/actuator/health", "/actuator/health/**",
                                 "/health", "/actuator/**",
                                 "/", "/impressum", "/datenschutz",
@@ -74,17 +87,11 @@ public class SecurityConfig {
                                 "/css/**", "/js/**", "/img/**", "/media/**", "/images/**",
                                 "/assets/**", "/fonts/**", "/webjars/**"
                         ).permitAll()
-
-                        // Geschützte Bereiche
                         .requestMatchers("/cart/**", "/checkout/**", "/orders/**")
                         .hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Alles andere muss authentifiziert sein
                         .anyRequest().authenticated()
                 )
-
-                // Login / Logout
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
@@ -101,38 +108,39 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
-
-                // Fehlerseiten
                 .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"))
-
-                // CSRF – nur H2-Konsole ausnehmen
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**", "/actuator/**"))
-
-                // Session-Schutz
                 .sessionManagement(sm -> sm
                         .sessionFixation(session -> session.migrateSession())
                         .maximumSessions(3)
                         .maxSessionsPreventsLogin(false)
                         .sessionRegistry(sessionRegistry)
                 )
-
-                // Sicherheitsheader
                 .headers(headers -> headers
                         .frameOptions(f -> f.sameOrigin())
                         .contentSecurityPolicy(csp -> csp
                                 .policyDirectives(
                                         "default-src 'self'; " +
-                                                "script-src 'self'; " +
+                                                // reCAPTCHA Scripts erlauben
+                                                "script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; " +
+                                                // Styles (dein eigenes CSS + inline, weil du viel mit Klassen arbeitest)
                                                 "style-src 'self' 'unsafe-inline'; " +
-                                                "img-src 'self' data:; " +
+                                                // Bilder inkl. reCAPTCHA
+                                                "img-src 'self' data: https://www.google.com/recaptcha/; " +
+                                                // Frames für reCAPTCHA
+                                                "frame-src 'self' https://www.google.com/recaptcha/; " +
+                                                // optional, aber sicher: nur eigene Verbindungen
+                                                "connect-src 'self'; " +
                                                 "object-src 'none'; " +
                                                 "base-uri 'self'; " +
                                                 "frame-ancestors 'none';"
                                 )
                         )
                 )
-
                 .requestCache(Customizer.withDefaults());
+
+        // Rate-Limit-Filter vor Auth-Filter einhängen
+        http.addFilterBefore(registrationRateLimitFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

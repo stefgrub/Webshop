@@ -10,7 +10,6 @@ import lombok.Setter;
 @Table(name = "order_items")
 public class OrderItem {
 
-    // --- getters/setters ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +30,7 @@ public class OrderItem {
 
     public OrderItem() {}
 
-    // ---- Alias-Methoden für Kompatibilität ----
+    // Alias-Methoden, falls irgendwo getPriceCents/setPriceCents benutzt werden
     public Integer getPriceCents() { return priceAtPurchaseCents; }
     public void setPriceCents(Integer priceCents) { this.priceAtPurchaseCents = priceCents; }
 }

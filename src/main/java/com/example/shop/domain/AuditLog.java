@@ -13,8 +13,7 @@ import java.util.Map;
         name = "audit_logs",
         indexes = {
                 @Index(name = "idx_audit_logs_created_at", columnList = "created_at"),
-                @Index(name = "idx_audit_admin", columnList = "admin_username"),
-                @Index(name = "idx_audit_entity", columnList = "entity_type, entity_id")
+                @Index(name = "idx_audit_admin", columnList = "admin_username")
         }
 )
 @Getter
@@ -28,11 +27,10 @@ public class AuditLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // DB: timestamptz, Default now()
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
 
-    // "alte" Felder (bereits im System verwendet)
+    // alte Felder
     @Column(name = "admin_username")
     private String adminUsername;
 
@@ -48,7 +46,6 @@ public class AuditLog {
     @Column(name = "entity_type")
     private String entityType;
 
-    // In der DB aktuell TEXT -> String verwenden
     @Column(name = "entity_id")
     private String entityId;
 
@@ -61,7 +58,6 @@ public class AuditLog {
     @Column(name = "query_string", columnDefinition = "text")
     private String queryString;
 
-    // JSON-Spalten als Map + expliziter JSON-Typ
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "request_body_masked", columnDefinition = "jsonb")
     private Map<String, Object> requestBodyMasked;
@@ -74,7 +70,7 @@ public class AuditLog {
     @Column(name = "diff_after_json", columnDefinition = "jsonb")
     private Map<String, Object> diffAfterJson;
 
-    // "neue" optionale Spalten (können parallel zu den alten genutzt werden)
+    // neue Felder
     @Column(name = "admin", length = 190)
     private String admin;
 

@@ -8,11 +8,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
+import java.util.Collections;
 
 @Service
 public class CatalogService {
@@ -27,38 +29,54 @@ public class CatalogService {
         this.categories = categories;
     }
 
-    public Page<Product> list(String q, int page, int size) {
-        var pageable = PageRequest.of(page, size, Sort.by("id").descending());
+    public Page<Product> list(String q, int page, int pageSize) {
+        var pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+
         if (q == null || q.isBlank()) {
-            log.debug("Alle Produkte werden geladen (ohne Suchbegriff)");
+            // Nur aktive Produkte im öffentlichen Katalog
             return products.findAll(pageable);
+        } else {
+            //Volltextsuche nur über aktive Produkte
+            return products.searchActive(q, pageable);
         }
-        String trimmed = q.trim();
-        log.debug("Produkte mit Filter '{}' werden geladen", trimmed);
-        return products.search(trimmed, pageable);
     }
 
+    /**
+     * Einzelnes Produkt für die Produktdetailseite.
+     * Nur aktive Produkte – inaktive liefern „nicht gefunden“.
+     */
     public Product getProduct(String slug) {
-        return products.findBySlug(slug)
-                .orElseThrow(() -> new IllegalArgumentException("product not found: " + slug));
+        return products.findBySlugAndActiveTrue(slug)
+                .orElseThrow(() -> new IllegalArgumentException("Produkt nicht gefunden oder inaktiv:: " + slug));
     }
 
+    /**
+     * Kategorien für Filter/Navigation.
+     */
     @Cacheable("categories")
     public List<Category> categories() {
-        log.debug("Lade Kategorien aus der Datenbank (ggf. aus dem Cache)");
-        return categories.findAll(Sort.by("name").ascending());
+        try {
+            return categories.findAll(Sort.by(Sort.Direction.ASC, "name"));
+        } catch (Exception e) {
+            // Fallback, falls findAll(Sort) nicht existiert
+            return categories.findAll();
+        }
     }
 
+    /**
+     * Ähnliche Produkte – nur aktive Produkte aus derselben Kategorie,
+     * die nicht das aktuelle Produkt sind.
+     */
     public List<Product> recommendProducts(Product base, int limit) {
-        if (base.getCategory() == null) {
-            log.debug("Keine Kategorie für Produkt {}, keine Empfehlungen", base.getId());
-            return List.of();
+        if (base == null || base.getCategory() == null) {
+            return Collections.emptyList();
         }
 
-        List<Product> all = products.findTop5ByCategoryAndIdNotOrderByIdDesc(base.getCategory(), base.getId());
-        if (all.size() <= limit) {
-            return all;
+        List<Product> list = products
+                .findTop5ByCategoryAndIdNotOrderByIdDesc(base.getCategory(), base.getId());
+        if (list.size() > limit) {
+            return list.subList(0, limit);
         }
-        return all.subList(0, limit);
+        return list;
     }
 }

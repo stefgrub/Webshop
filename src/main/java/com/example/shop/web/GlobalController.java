@@ -14,7 +14,6 @@ public class GlobalController {
         this.maintenanceService = maintenanceService;
     }
 
-
     @ModelAttribute("shopName")
     public String shopName() {
         return "WebShop";

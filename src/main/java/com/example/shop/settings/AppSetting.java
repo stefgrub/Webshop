@@ -6,9 +6,13 @@ import java.time.OffsetDateTime;
 
 @Entity
 @Table(name = "app_setting")
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor @Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AppSetting {
+
     @Id
     @Column(name = "key", nullable = false, length = 100)
     private String key;

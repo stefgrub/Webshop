@@ -56,3 +56,19 @@ logging:
     com.zaxxer.hikari: WARN
     org.flywaydb.core: INFO
     com.example.shop: INFO
+
+recaptcha:
+  enabled: true
+  site-key: ${RECAPTCHA_SITE_KEY}
+  secret-key: ${RECAPTCHA_SECRET_KEY}
+
+app:
+  mail:
+    from:
+      address: ${MAIL_FROM_ADDRESS:noreply@viewwebshop.at}
+      name: ${MAIL_FROM_NAME:ViewWebshop}
+
+webshop:
+  ai:
+    base-url: https://tools.viewwebshop.at
+    bearer-token: ${AI_BEARER_TOKEN}

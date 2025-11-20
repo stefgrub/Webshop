@@ -2,8 +2,10 @@ package com.example.shop.repo;
 
 import com.example.shop.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-
+import org.springframework.transaction.annotation.Transactional;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +23,8 @@ public interface UserRepo extends JpaRepository<User, Long> {
            """)
     List<User> findAdminsVerified();
 
+    @Modifying
+    @Transactional
+    @Query("delete from User u where u.emailVerified = false and u.lastCodeSent < :threshold")
+    int deleteUnverifiedOlderThan(Instant threshold);
 }

@@ -11,90 +11,75 @@ import lombok.Setter;
 @Table(name = "products")
 public class Product {
 
-    // --- getters/setters ---
-    @Setter
-    @Getter
+    @Setter @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
-    @Getter
-    @NotBlank private String name;
-
-    @Setter
-    @Getter
-    @NotBlank private String slug;
-
-    @Min(0) private int priceCents;
-
-    @Setter
-    @Getter
-    @Size(max=2000) private String description;
-
-    @Setter
-    @Getter
+    @Setter @Getter
+    @NotBlank
+    @Size(max = 200)
     @Column(nullable = false)
-    private Integer stock;
+    private String name;
 
-    @Setter
-    @Getter
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Setter @Getter
+    @NotBlank
+    @Size(max = 200)
+    @Column(nullable = false, unique = true)
+    private String slug;
 
-    @Transient
-    public String getImagePath() {
-        String resolved = getImageUrlResolved();
-        if (resolved != null) {
-            return resolved;
-        }
-        return "/img/placeholder.png";
-    }
-
-    @Setter
-    @Getter
+    @Setter @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Product() {}
+    @Setter @Getter
+    @Min(0)
+    @Column(name = "price_cents", nullable = false)
+    private Integer priceCents;
 
-    public Integer getPriceCents() { return priceCents; }
-    public void setPriceCents(Integer priceCents) { this.priceCents = priceCents; }
+    @Setter @Getter
+    @Size(max = 500)
+    private String shortDescription;
+
+    @Setter @Getter
+    @Size(max = 2000)
+    private String description;
+
+    @Setter @Getter
+    @Column(name = "features")
+    private String features;
+
+    @Setter @Getter
+    @Column(name = "details")
+    private String details;
+
+    @Setter @Getter
+    @Column(nullable = false)
+    private Integer stock;
+
+    @Setter @Getter
+    @Column(nullable = false)
+    private Boolean active = true;
+
+    @Setter @Getter
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Transient
     public String getImageUrlResolved() {
         if (imageUrl == null || imageUrl.isBlank()) {
             return null;
         }
-
         String trimmed = imageUrl.trim();
-
-        // Externe URLs 1:1 übernehmen
-        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-            return trimmed;
-        }
-
-        // Bereits vollständige Pfade (z.B. /media/..., /images/...)
-        if (trimmed.startsWith("/")) {
-            return trimmed;
-        }
-
-        // Nur Dateiname -> wir gehen davon aus, dass es aus /media kommt
+        if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+        if (trimmed.startsWith("/")) return trimmed;
         return "/media/" + trimmed;
     }
 
-    @Setter
-    @Getter
-    @OneToMany(mappedBy = "product",
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
-            orphanRemoval = true)
-    @OrderBy("sortIndex ASC, id ASC")
-    private java.util.List<ProductImage> images = new java.util.ArrayList<>();
-
-    @Setter
-    @Getter
-    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private java.util.List<OrderItem> orderItems = new java.util.ArrayList<>();
-
+    @Transient
+    public String getImagePath() {
+        String resolved = getImageUrlResolved();
+        return resolved != null ? resolved : "/img/placeholder.png";
+    }
 }

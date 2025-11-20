@@ -67,16 +67,21 @@ services:
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
       MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS: "never"
 
+      # Wichtig: Zielpfad für Uploads
+      APP_MEDIA_DIR: "/app/media"
+
     secrets:
       - db_password
       - db_user
       - db_name
+      - RECAPTCHA_SITE_KEY
+      - RECAPTCHA_SECRET_KEY
+      - AI_BEARER_TOKEN
 
     depends_on:
       db:
         condition: service_healthy
 
-    # Hinweis: Dein Basis-Image braucht curl oder wget für den Healthcheck!
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
       interval: 10s
@@ -84,11 +89,15 @@ services:
       retries: 5
       start_period: 25s
 
+    # *** WICHTIG: Upload-Bilder dauerhaft speichern ***
+    volumes:
+      - /opt/shop/Webshop/media:/app/media
+
     restart: unless-stopped
     networks: [webshop_net]
 
   caddy:
-    image: caddy:2
+    image: caddy:latest
     container_name: caddy
     depends_on:
       app:
@@ -100,10 +109,14 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddydata:/data
       - caddyconfig:/config
+      # Optional: Caddy muss die Bilder NICHT mounten, aber schadet auch nicht
+      - /opt/shop/Webshop/media:/app/media
     environment:
       TZ: Europe/Vienna
     restart: unless-stopped
     networks: [webshop_net]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 secrets:
   db_password:
@@ -112,7 +125,12 @@ secrets:
     file: ./secrets/db_user.txt
   db_name:
     file: ./secrets/db_name.txt
-
+  RECAPTCHA_SITE_KEY:
+    file: ./secrets/RECAPTCHA_SITE_KEY.txt
+  RECAPTCHA_SECRET_KEY:
+    file: ./secrets/RECAPTCHA_SECRET_KEY.txt
+  AI_BEARER_TOKEN:
+    file: ./secrets/AI_BEARER_TOKEN.txt
 volumes:
   db_data:
   caddydata:

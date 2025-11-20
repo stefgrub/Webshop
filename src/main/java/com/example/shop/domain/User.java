@@ -10,11 +10,12 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
 
-    // --- Getter/Setter ---
+    // Primärschlüssel
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Login / Credentials
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -22,19 +23,22 @@ public class User {
     private String passwordHash;
 
     @Column(nullable = false)
-    private String role;
+    private String role; // z.B. "USER" oder "ADMIN"
 
     // --- E-Mail-Verifikation ---
     @Column(nullable = false)
     private boolean emailVerified = false;
 
+    // Hash des 6-stelligen Codes
     private String verificationCodeHash;
 
-    private java.time.Instant verificationExpires;   // <— vollqualifiziert
+    // Ablaufzeitpunkt des Codes
+    private java.time.Instant verificationExpires;
 
+    // wie viele Fehlversuche / Eingaben
     @Column(nullable = false)
     private int verificationAttempts = 0;
 
-    private java.time.Instant lastCodeSent;          // <— vollqualifiziert
-
+    // wann zuletzt ein Code gesendet wurde
+    private java.time.Instant lastCodeSent;
 }

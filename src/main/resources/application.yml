@@ -60,3 +60,13 @@ logging:
 
 app:
   media-dir: ${APP_MEDIA_DIR:/app/media}
+
+  mail:
+    from:
+      address: "noreply@viewwebshop.local"
+      name: "ViewWebshop"
+
+webshop:
+  ai:
+    base-url: https://tools.viewwebshop.at
+    bearer-token: ${AI_BEARER_TOKEN}

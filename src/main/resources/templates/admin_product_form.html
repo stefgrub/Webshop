@@ -40,9 +40,29 @@
                 <input th:field="*{imageUrl}" placeholder="https://…"/>
             </label>
         </div>
+        <label>
+            <input type="checkbox" th:field="*{active}"/>
+            Produkt ist aktiv (sichtbar im Shop)
+        </label>
+        </div>
         <div class="product_description">
-            <label>Beschreibung
-                <textarea rows="6" th:field="*{description}"></textarea>
+            <label>Kurzbeschreibung
+                <textarea rows="3" th:field="*{shortDescription}" placeholder="Kurzer Teaser"></textarea>
+            </label>
+        </div>
+        <div class="product_description">
+            <label>Ausführliche Beschreibung
+                <textarea rows="6" th:field="*{description}" placeholder="Detaillierte Produktbeschreibung..."></textarea>
+            </label>
+        </div>
+        <div class="product_description">
+            <label>Features / Highlights
+                <textarea rows="5" th:field="*{features}" placeholder="Features"></textarea>
+            </label>
+        </div>
+        <div class="product_description">
+            <label>Details
+                <textarea rows="5" th:field="*{details}" placeholder="Zusätzliche Details, technische Daten..."></textarea>
             </label>
         </div>
         <div class="actions">

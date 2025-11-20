@@ -1,0 +1,8 @@
+ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS short_description VARCHAR(500);
+
+ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS features TEXT;
+
+ALTER TABLE products
+    ADD COLUMN IF NOT EXISTS details TEXT;

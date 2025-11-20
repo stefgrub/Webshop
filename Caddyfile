@@ -12,6 +12,7 @@ viewwebshop.at {
                 }
                 format json
         }
+
         # Static assets: lange Caches
         @assets path /assets/* /static/* /css/* /js/* /img/* /fonts/* /favicon.ico
         header @assets Cache-Control "public, max-age=31536000, immutable"
@@ -44,8 +45,17 @@ viewwebshop.at {
                 Referrer-Policy "strict-origin-when-cross-origin"
 
                 # Content-Security-Policy (Basisvariante)
-                # (Erlaubt nur eigene Quellen + eingebettete Bilder)
-                Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"
+                Content-Security-Policy "default-src 'self'; \
+                        img-src 'self' data: https://www.google.com/recaptcha/; \
+                        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; \
+                        font-src 'self' https://fonts.gstatic.com; \
+                        script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; \
+                        connect-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; \
+                        frame-src 'self' https://www.google.com/recaptcha/; \
+                        frame-ancestors 'self'; \
+                        base-uri 'self'; \
+                        form-action 'self'; \
+                        object-src 'none'"
                 Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), bluetooth=(), fullscreen=(self)"
         }
 
@@ -79,5 +89,37 @@ www.viewwebshop.at {
                 Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
                 Content-Security-Policy "default-src 'self'"
                 Permissions-Policy "geolocation=(), microphone=(), camera=()"
+        }
+}
+
+# =====================================================
+# tools.viewwebshop.at → Node-AI-Toolserver auf dem Host (Port 3080)
+# =====================================================
+tools.viewwebshop.at {
+        log {
+                output file /data/caddy/access.log {
+                        roll_size 10MiB
+                        roll_keep 10
+                        roll_keep_for 720h
+                }
+                format json
+        }
+
+        header {
+                -Server
+                Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+                X-Frame-Options "SAMEORIGIN"
+                X-Content-Type-Options "nosniff"
+                Referrer-Policy "strict-origin-when-cross-origin"
+                Content-Security-Policy "default-src 'self'; connect-src 'self';"
+        }
+
+        encode zstd gzip
+
+        reverse_proxy host.docker.internal:3080 {
+                transport http {
+                        read_timeout 60s
+                        write_timeout 60s
+                }
         }
 }

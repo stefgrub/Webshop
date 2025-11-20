@@ -16,7 +16,6 @@ public class Order {
 
     public enum Status { NEW, PAID, SHIPPED, CANCELED }
 
-    // --- getters/setters ---
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,12 +31,12 @@ public class Order {
     private Integer totalCents = 0;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status = Status.NEW;
 
     @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
-    // Lieferadresse / Rechnungsadresse (wie in deinem CheckoutService genutzt)
     @Column(name = "full_name")
     private String fullName;
 
@@ -52,14 +51,10 @@ public class Order {
 
     private boolean canceled = false;
 
-    public Order() {}
-
-    // --- convenience ---
     public void addItem(OrderItem item) {
         if (item != null) {
             item.setOrder(this);
             this.items.add(item);
         }
     }
-
 }

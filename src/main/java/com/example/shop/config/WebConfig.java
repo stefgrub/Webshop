@@ -5,17 +5,16 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.util.ContentCachingRequestWrapper;
-import org.springframework.web.util.ContentCachingResponseWrapper;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 
 import java.io.IOException;
 
@@ -33,19 +32,21 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // Wir wollen den Body für alle Requests verfügbar machen – filtern in der Interceptor-Logik
+        // Audit-Interceptor für alle Requests
         registry.addInterceptor(audit).addPathPatterns("/**");
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Statische Auslieferung der Medien aus dem Host-Verzeichnis
         registry.addResourceHandler("/media/**")
                 .addResourceLocations("file:" + mediaDir + "/");
     }
 
     /**
-     * Registriert einen Filter, der Request/Response wrappt, damit der Body im Interceptor
+     * Registriert einen Filter, der NUR den Request wrappt, damit der Body im Interceptor
      * (via ContentCachingRequestWrapper) auslesbar ist.
+     * Die Response wird NICHT gewrapped -> kein Konflikt mit getWriter()/getOutputStream().
      */
     @Bean
     public FilterRegistrationBean<OncePerRequestFilter> contentCachingFilter() {
@@ -53,19 +54,14 @@ public class WebConfig implements WebMvcConfigurer {
             @Override
             protected void doFilterInternal(HttpServletRequest request,
                                             HttpServletResponse response,
-                                            FilterChain chain) throws ServletException, IOException {
+                                            FilterChain chain)
+                    throws ServletException, IOException {
 
                 ContentCachingRequestWrapper wrappedRequest =
                         new ContentCachingRequestWrapper(request, 1024 * 1024); // bis 1 MB puffern
-                ContentCachingResponseWrapper wrappedResponse =
-                        new ContentCachingResponseWrapper(response);
 
-                try {
-                    chain.doFilter(wrappedRequest, wrappedResponse);
-                } finally {
-                    // Response-Body zurück in den echten Response kopieren
-                    wrappedResponse.copyBodyToResponse();
-                }
+                // Response unverändert durchreichen
+                chain.doFilter(wrappedRequest, response);
             }
         };
 

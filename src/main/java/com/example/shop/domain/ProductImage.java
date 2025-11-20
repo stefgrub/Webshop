@@ -14,19 +14,20 @@ public class ProductImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
     private Product product;
 
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
 
-    @Column(name = "sort_index", nullable = false)
-    private int sortIndex = 0;
+    // Sortierreihenfolge in der Galerie
+    @Column(name = "sort_index")
+    private Integer sortIndex;
 
+    // Optionaler Bildtitel / Alt-Text
+    @Column(name = "caption")
     private String caption;
-
-    public ProductImage() {}
 
     @Transient
     public String getImageUrlResolved() {
@@ -34,7 +35,6 @@ public class ProductImage {
             return null;
         }
         String trimmed = imageUrl.trim();
-
         if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
             return trimmed;
         }

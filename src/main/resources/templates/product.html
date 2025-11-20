@@ -3,60 +3,157 @@
 <head th:replace="~{layout :: head(${p.name})}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
+
 <main class="container">
     <section class="product-detail">
         <div class="product-media">
             <!-- Hauptbild: zuerst Galerie-Bilder, dann Fallback -->
             <div class="product-main-image">
                 <!-- 1) Wenn es Galerie-Bilder gibt: nimm das erste -->
-                <img th:if="${!#lists.isEmpty(p.images)}" th:src="${p.images[0].imageUrlResolved}" alt="Produktbild" class="product-image"/>
+                <img th:if="${p.images != null and !#lists.isEmpty(p.images)}"
+                     th:src="${p.images[0].imageUrlResolved}"
+                     alt="Produktbild"
+                     class="product-image"/>
+
                 <!-- 2) Wenn keine Galerie-Bilder, aber ein imageUrl vorhanden ist -->
-                <img th:if="${#lists.isEmpty(p.images) and p.imageUrlResolved != null}" th:src="${p.imageUrlResolved}" alt="Produktbild" class="product-image"/>
+                <img th:if="${(p.images == null or #lists.isEmpty(p.images)) and p.imageUrlResolved != null}"
+                     th:src="${p.imageUrlResolved}"
+                     alt="Produktbild"
+                     class="product-image"/>
+
                 <!-- 3) Fallback, wenn gar nichts hinterlegt ist -->
-                <img th:if="${#lists.isEmpty(p.images) and p.imageUrlResolved == null}" th:src="@{/img/placeholder.png}" alt="Kein Bild vorhanden" class="product-image"/>
+                <img th:if="${(p.images == null or #lists.isEmpty(p.images)) and p.imageUrlResolved == null}"
+                     th:src="@{/img/placeholder.png}"
+                     alt="Kein Bild vorhanden"
+                     class="product-image"/>
             </div>
+
             <!-- Thumbnails unter dem Hauptbild -->
-            <div class="product-thumbs" th:if="${!#lists.isEmpty(p.images)}">
-                <img th:each="img : ${p.images}" th:src="${img.imageUrlResolved}" th:alt="${img.caption != null ? img.caption : p.name}" class="product-thumb">
+            <div class="product-thumbs"
+                 th:if="${p.images != null and !#lists.isEmpty(p.images)}">
+                <img th:each="img : ${p.images}"
+                     th:src="${img.imageUrlResolved}"
+                     th:alt="${img.caption != null ? img.caption : p.name}"
+                     class="product-thumb">
             </div>
         </div>
+
         <div class="product-info">
             <h1 class="product-title" th:text="${p.name}">Produktname</h1>
-            <p class="product-category" th:text="${p.category.name}">Kategorie</p>
-            <p class="product-description" th:text="${p.description}">Produktbeschreibung…</p>
-            <p class="product-price" th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">0,00 €</p>
+
+            <!-- Kategorie nur anzeigen, wenn vorhanden -->
+            <p class="product-category"
+               th:if="${p.category != null}"
+               th:text="${p.category.name}">
+                Kategorie
+            </p>
+
+            <!-- Kurzbeschreibung -->
+            <p class="product-short"
+               th:if="${p.shortDescription != null and !#strings.isEmpty(p.shortDescription)}"
+               th:text="${p.shortDescription}">
+                Kurze Beschreibung...
+            </p>
+
+            <p class="product-price"
+               th:text="${#numbers.formatDecimal(p.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">
+                0,00 €
+            </p>
+
             <div class="stock" th:if="${p.stock != null && p.stock > 0}">
                 <span class="stock-icon">🟢</span>
                 Auf Lager (<b th:text="${p.stock}">0</b> verfügbar)
             </div>
+
             <div class="stock out-of-stock" th:if="${p.stock == null || p.stock == 0}">
                 <span class="stock-icon">🔴</span>
                 Momentan ausverkauft
             </div>
+
             <form th:action="@{'/cart/add/' + ${p.id}}" method="post" class="cart-form">
                 <label for="qty">Menge:</label>
                 <input id="qty" type="number" name="qty" min="1" value="1" class="qty-input"/>
-                <button type="submit" class="btn primary" th:disabled="${p.stock == 0}">🛒 In den Warenkorb</button>
+                <button type="submit" class="btn primary" th:disabled="${p.stock == 0}">
+                    🛒 In den Warenkorb
+                </button>
             </form>
+
             <a th:href="@{/}" class="btn secondary back-btn">Zurück zum Shop</a>
+
+            <!-- Features / Highlights -->
+            <section class="product-features"
+                     th:if="${p.features != null and !#strings.isEmpty(p.features)}">
+                <h2>Highlights</h2>
+                <ul>
+                    <li th:each="f : ${#strings.split(p.features, '\n')}"
+                        th:text="${#strings.trim(f)}"
+                        th:if="${!#strings.isEmpty(#strings.trim(f))}">
+                        Feature…
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Ausführliche Beschreibung / Details -->
+            <section class="product-details"
+                     th:if="${(p.description != null and !#strings.isEmpty(p.description)) or
+                              (p.details != null and !#strings.isEmpty(p.details))}">
+                <h2>Produktbeschreibung</h2>
+
+                <p class="product-description"
+                   th:if="${p.description != null and !#strings.isEmpty(p.description)}"
+                   th:text="${p.description}">
+                    Ausführliche Beschreibung…
+                </p>
+
+                <h3 th:if="${p.details != null and !#strings.isEmpty(p.details)}">Details</h3>
+                <p th:if="${p.details != null and !#strings.isEmpty(p.details)}"
+                   th:utext="${#strings.replace(p.details, '\n', '<br/>')}">
+                    Details…
+                </p>
+            </section>
         </div>
     </section>
-    <!-- Ähnliche Produkte bleibt wie bei dir -->
-    <section th:if="${recommended != null and !#lists.isEmpty(recommended)}" class="card recommendations" style="margin-top: 3rem; padding: 2rem; border-radius: 1.2rem;">
+
+    <!-- Ähnliche Produkte -->
+    <section th:if="${recommended != null and !#lists.isEmpty(recommended)}"
+             class="card recommendations"
+             style="margin-top: 3rem; padding: 2rem; border-radius: 1.2rem;">
+
         <h2 style="margin-bottom: 1rem;">Ähnliche Produkte</h2>
-        <div class="recommend-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.6rem;">
-            <article th:each="r : ${recommended}" class="recommend-item" style="background: rgba(255,255,255,0.04); border-radius: 1rem; padding: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align:center;">
-                <a th:href="@{|/product/${r.slug}|}" style="text-decoration:none; color:inherit;">
+
+        <div class="recommend-grid"
+             style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.6rem;">
+
+            <article th:each="r : ${recommended}"
+                     class="recommend-item"
+                     style="background: rgba(255,255,255,0.04); border-radius: 1rem; padding: 1rem;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.15); text-align:center;">
+
+                <a th:href="@{|/products/${r.slug}|}"
+                   style="text-decoration:none; color:inherit;">
+
                     <div class="recommend-image">
-                        <img th:src="${r.imagePath}" th:alt="${r.name}" loading="lazy">
+                        <img th:src="${r.imagePath}"
+                             th:alt="${r.name}"
+                             loading="lazy">
                     </div>
-                    <p style="margin-top: 0.7rem; font-weight: 600;" th:text="${r.name}">Produktname</p>
-                    <p style="color: var(--accent); font-weight:700;" th:text="${#numbers.formatDecimal(r.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">0,00 €</p>
+
+                    <p style="margin-top: 0.7rem; font-weight: 600;"
+                       th:text="${r.name}">
+                        Produktname
+                    </p>
+
+                    <p style="color: var(--accent); font-weight:700;"
+                       th:text="${#numbers.formatDecimal(r.priceCents/100.0,1,'COMMA',2,'POINT')} + ' €'">
+                        0,00 €
+                    </p>
+
                 </a>
             </article>
         </div>
     </section>
 </main>
+
 <footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

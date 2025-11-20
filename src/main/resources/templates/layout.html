@@ -22,6 +22,7 @@
     <script th:src="@{/js/hideout.js}" defer></script>
     <script th:src="@{/js/theme-toggle.js}" defer></script>
     <script th:src="@{/js/banner_wave_final.js(v=${#dates.createNow().time})}" defer></script>
+    <script th:if="${@recaptchaProperties.enabled}" th:src="'https://www.google.com/recaptcha/api.js'"></script>
     <style th:inline="javascript">
         :root{ --theme-primary: [[${@settingsService.getString('theme.primary', '#4f46e5')}]]; }
     </style>
