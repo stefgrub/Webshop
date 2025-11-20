@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout :: head('Impressum – Demo Webshop')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container" style="max-width:800px;margin:2rem auto;">
+    <h1>Impressum (Demo)</h1>
+
+    <p><strong>Hinweis:</strong> Dieser Webshop ist ein <strong>reines Lernprojekt</strong>
+        und dient ausschließlich zu Schulungs- und Demonstrationszwecken.
+        Es werden <strong>keine echten Produkte verkauft</strong> und
+        <strong>keine realen Kundendaten verarbeitet</strong>.</p>
+
+    <h2>Angaben gemäß §5 ECG / §24 MedienG</h2>
+    <p>
+        <strong>Projektbetreiber:</strong><br>
+        Stefan Grubbauer<br>
+        Oberdrof 39<br>
+        8181 Mitterdorf an der Raab<br>
+        Österreich<br>
+        <br>
+        <strong>Kontakt:</strong><br>
+        E-Mail: stefan.grubbauer@icloud.com<br>
+    </p>
+
+    <h2>Haftungsausschluss</h2>
+    <p>Da dieses Projekt nur zu Übungszwecken erstellt wurde,
+        übernehmen Betreiber oder Entwickler keinerlei Verantwortung
+        für die Richtigkeit, Vollständigkeit oder Aktualität der dargestellten Inhalte.</p>
+
+    <h2>Urheberrecht</h2>
+    <p>Alle im Rahmen dieses Projekts verwendeten Inhalte, Bilder und Texte
+        stammen aus frei verfügbaren Quellen oder wurden zu Lernzwecken selbst erstellt.</p>
+
+    <h2>Rechtlicher Hinweis</h2>
+    <p>Dies ist kein echter Webshop. Es findet <strong>kein kommerzieller Verkauf</strong> statt.
+        Alle dargestellten Preise, Produkte und Daten sind fiktiv.</p>
+
+    <p style="margin-top:2rem;">
+        <a th:href="@{/datenschutz}" style="color:#6aa7ff;">Zur Datenschutzerklärung</a>
+    </p>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>
