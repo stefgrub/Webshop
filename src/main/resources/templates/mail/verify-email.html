@@ -1,75 +1,111 @@
 <!DOCTYPE html>
 <html lang="de" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{layout :: head('E-Mail bestätigen')}"></head>
+<head>
+    <meta charset="UTF-8">
+    <title>E-Mail-Adresse bestätigen</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        .wrapper {
+            width: 100%;
+            padding: 24px 0;
+        }
+        .card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px 28px;
+            box-shadow: 0 10px 30px rgba(15,23,42,0.08);
+        }
+        h1 {
+            font-size: 20px;
+            margin: 0 0 12px;
+            color: #111827;
+        }
+        p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #374151;
+            margin: 0 0 12px;
+        }
+        .code-box {
+            margin: 18px 0;
+            padding: 14px 18px;
+            border-radius: 10px;
+            background: #111827;
+            color: #f9fafb;
+            font-size: 22px;
+            letter-spacing: 0.2em;
+            text-align: center;
+            font-weight: 600;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1);
+            color: #ffffff !important;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 16px;
+        }
+        .footer {
+            max-width: 600px;
+            margin: 12px auto 0;
+            font-size: 11px;
+            color: #9ca3af;
+            text-align: center;
+        }
+    </style>
+</head>
 <body>
-<header th:replace="~{layout :: header}"></header>
+<div class="wrapper">
+    <div class="card">
+        <h1 th:text="${appName} ?: 'WebShop'">WebShop</h1>
 
-<main class="container" style="max-width:520px;margin:3rem auto;">
-    <section class="card" style="padding:2rem;border-radius:16px;background:var(--card);box-shadow:var(--shadow)">
-        <h1 style="margin:0 0 0.5rem;font-weight:600;">E-Mail bestätigen</h1>
-        <div th:if="${success}" class="alert alert-success" data-redirect="login" style="margin:1rem 0;padding:1rem;border-radius:12px;background:rgba(46,204,113,.15);color:#2ecc71; font-weight:600;text-align:center; animation:fadeIn .5s ease;">
-            <span th:text="${success}"></span>
-        </div>
+        <p>Hallo,</p>
 
-        <div th:if="${error}" style="margin:1rem 0;padding:1rem;border-radius:12px; background:rgba(231,76,60,.15);color:#e74c3c; font-weight:600;text-align:center; animation:shake .3s ease;">
-            <span th:text="${error}"></span>
-        </div>
-        <p th:text="'Wir haben einen 6-stelligen Code an ' + ${email} + ' gesendet.'"></p>
-
-        <form id="verify-form" th:action="@{/verify}" method="post">
-            <input type="hidden" name="email" th:value="${email}">
-            <input type="hidden" id="code-full" name="code" value="">
-
-            <div class="code-grid" style="display:flex;gap:12px;justify-content:center;margin:24px 0;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-                <input class="code-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code"
-                       style="width:48px;height:56px;border-radius:12px;border:1px solid var(--border);
-                      background:var(--bg);text-align:center;font-size:24px;font-weight:700;outline:none;">
-            </div>
-
-            <button class="btn btn-primary" type="submit" style="width:100%">Bestätigen</button>
-        </form>
-
-        <form th:action="@{/verify/resend}" method="post" style="margin-top:16px;text-align:center;">
-            <input type="hidden" name="email" th:value="${email}">
-            <button class="btn btn-link" type="submit">Code erneut senden</button>
-        </form>
-
-        <p style="opacity:.8;margin-top:12px;font-size:.95rem;">
-            Tipp: Du kannst den gesamten Code einfügen (Paste), die Felder füllen sich automatisch.
+        <p>
+            vielen Dank für deine Registrierung bei
+            <span th:text="${appName} ?: 'WebShop'">WebShop</span>.
+            Bitte bestätige deine E-Mail-Adresse, indem du den folgenden Code eingibst:
         </p>
-    </section>
-</main>
 
-<footer th:replace="~{layout :: footer}"></footer>
+        <div class="code-box" th:text="${code}">123456</div>
 
-<script defer th:src="@{/js/verify.js}"></script>
-<script defer th:src="@{/js/verify-redirect.js}"></script>
+        <p>
+            Oder klicke alternativ auf diesen Link:
+            <br>
+            <a th:href="${verifyUrl}" th:text="${verifyUrl}">https://example.com/verify</a>
+        </p>
 
-<style>
-    :root{
-      --bg: var(--surface, #0b0b0c00);
-      --border: color-mix(in oklab, var(--fg, #888) 20%, transparent);
-    }
-    .btn.btn-link{
-      background:none;border:none;padding:.25rem .5rem;cursor:pointer;
-      color:var(--link,#007aff);text-decoration:none;font-weight:500;
-    }
-    .btn.btn-link:hover{text-decoration:underline;}
-</style>
+        <p class="meta">
+            Dieser Code ist etwa
+            <span th:text="${expiresMinutes} ?: 15">15</span>
+            Minuten gültig.
+            Wenn du diese Registrierung nicht ausgelöst hast, kannst du diese E-Mail ignorieren.
+        </p>
+
+        <p class="meta">
+            Bei Fragen wende dich bitte an
+            <span th:text="${supportEmail} ?: 'support@example.com'">support@example.com</span>.
+        </p>
+    </div>
+
+    <div class="footer">
+        &copy; <span th:text="${appName} ?: 'WebShop'">WebShop</span>. Alle Rechte vorbehalten.
+    </div>
+</div>
 </body>
 </html>

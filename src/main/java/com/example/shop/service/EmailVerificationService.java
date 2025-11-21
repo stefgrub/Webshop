@@ -28,7 +28,7 @@ public class EmailVerificationService {
     private final PasswordEncoder passwordEncoder;
     private final SecureRandom random = new SecureRandom();
 
-    @Value("${app.mail.from.address:noreply@localhost}")
+    @Value("${app.mail.from.address:support@localhost}")
     private String fromAddress;
 
     @Value("${app.mail.from.name:WebShop}")

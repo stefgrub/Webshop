@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="de">
+<head th:replace="~{layout :: head('Admin KI-Assistent')}"></head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<main class="container admin-assistant">
+    <section class="card chat-card">
+        <div class="chat-header">
+            <div class="chat-title">
+                <h1>Admin KI-Assistent</h1>
+                <p class="muted">
+                    Stelle technische Fragen zu deinem Webshop, Code, Templates oder Optimierungsideen.
+                </p>
+            </div>
+            <div class="chat-status">
+                <span class="status-dot"></span>
+                <span>Verbunden mit ChatGPT</span>
+            </div>
+        </div>
+
+        <!-- Chat-Verlauf -->
+        <div class="chat-body">
+            <div th:if="${question == null and answer == null}" class="chat-empty">
+                <p>
+                    Noch keine Unterhaltung. Starte mit einer Frage – z.&nbsp;B.:
+                </p>
+                <div class="chat-suggestions">
+                    <button type="button" class="chip" data-preset>
+                        Analysiere meinen Wartungsmodus und erkläre mir den Ablauf.
+                    </button>
+                    <button type="button" class="chip" data-preset>
+                        Prüfe meine Templates auf SEO-Verbesserungen.
+                    </button>
+                    <button type="button" class="chip" data-preset>
+                        Wo siehst du mögliche Performance-Probleme im Webshop?
+                    </button>
+                </div>
+            </div>
+
+            <div th:if="${question != null or answer != null}" class="chat-messages">
+                <!-- Letzte Frage (Admin) -->
+                <div class="chat-row chat-row-user" th:if="${question != null}">
+                    <div class="chat-bubble chat-bubble-user">
+                        <div class="chat-meta">
+                            <span class="chat-author">Du</span>
+                            <span class="chat-tag">Admin</span>
+                        </div>
+                        <div class="chat-text" th:text="${question}">Frage des Admins</div>
+                    </div>
+                </div>
+
+                <!-- Antwort von der KI -->
+                <div class="chat-row chat-row-ai" th:if="${answer != null}">
+                    <div class="chat-bubble chat-bubble-ai">
+                        <div class="chat-meta">
+                            <span class="chat-author">KI-Assistent</span>
+                            <span class="chat-tag chat-tag-ai">Antwort</span>
+                        </div>
+                        <div class="chat-text">
+                            <!-- einfache Zeilenumbrüche beibehalten -->
+                            <pre th:text="${answer}">Antwort der KI</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Eingabebereich -->
+        <div class="chat-footer">
+            <form method="post" th:action="@{/admin/assistant}" class="chat-form" id="assistant-form">
+                <div class="chat-input-wrapper">
+                    <textarea
+                            id="assistant-question"
+                            name="q"
+                            rows="3"
+                            placeholder="Frag die KI z. B. nach Code-Review, Fehleranalyse oder SEO-Tipps…"
+                            th:text="${question}"></textarea>
+                </div>
+                <div class="chat-actions">
+                    <div class="chat-actions-left">
+                        <small class="muted">
+                            Tipp: Sei möglichst konkret – z.&nbsp;B. „Analysiere AdminMaintenanceController und erkläre mir mögliche Fehlerquellen.“
+                        </small>
+                    </div>
+                    <div class="chat-actions-right">
+                        <button type="submit" class="btn primary" id="assistant-send">
+                            Senden
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+
+<!-- Kleines JS für Preset-Buttons & Ladefeedback -->
+<script th:inline="javascript">
+    (function () {
+        const form = document.getElementById('assistant-form');
+        const textarea = document.getElementById('assistant-question');
+        const sendBtn = document.getElementById('assistant-send');
+
+        // Preset-Chips ins Textfeld übernehmen
+        document.querySelectorAll('[data-preset]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                textarea.value = btn.textContent.trim();
+                textarea.focus();
+            });
+        });
+
+        // Senden-Button beim Abschicken visuell blockieren
+        if (form && sendBtn) {
+            form.addEventListener('submit', () => {
+                sendBtn.disabled = true;
+                sendBtn.dataset.originalText = sendBtn.textContent;
+                sendBtn.textContent = 'Frage wird gesendet…';
+            });
+        }
+    })();
+</script>
+</body>
+</html>

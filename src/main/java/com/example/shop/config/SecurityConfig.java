@@ -84,7 +84,7 @@ public class SecurityConfig {
                                 "/register", "/verify", "/verify/resend",
                                 "/login", "/logout",
                                 "/favicon.ico", "/robots.txt", "/sitemap.xml",
-                                "/css/**", "/js/**", "/img/**", "/media/**", "/images/**",
+                                "/css/**", "/js/**", "/products/**", "/img/**", "/media/**", "/images/**",
                                 "/assets/**", "/fonts/**", "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/cart/**", "/checkout/**", "/orders/**")

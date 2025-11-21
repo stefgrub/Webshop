@@ -31,7 +31,7 @@ public class AdminMaintenanceController {
     ) {
         settings.setBool(SettingsService.K_ENABLED, enabled);
         settings.setString(SettingsService.K_MESSAGE, message);
-        settings.setString(SettingsService.K_HP_ONLY, Boolean.toString(homepageOnly));
+        settings.setBool(SettingsService.K_HP_ONLY, homepageOnly);
         settings.setString(SettingsService.K_AUDIENCE, audience);
         settings.setInt(SettingsService.K_LEVEL, level);
         settings.setString(SettingsService.K_LINK, link == null ? "" : link.trim());

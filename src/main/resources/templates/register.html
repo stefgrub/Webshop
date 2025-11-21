@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{layout :: head('Registrieren')}"></head>
 <body>
 <header th:replace="~{layout :: header}"></header>
@@ -7,42 +7,55 @@
 <main class="container auth">
     <h1>Konto erstellen</h1>
 
-    <!-- Globale Fehlermeldungen (z.B. Captcha) -->
-    <div class="alert error"
-         th:if="${#fields.hasGlobalErrors()}">
-        <p th:each="err : ${#fields.globalErrors()}"
-           th:text="${err}"></p>
-    </div>
-
     <form th:action="@{/register}" th:object="${form}" method="post">
-        <label>E-Mail:</label>
-        <input type="email" th:field="*{email}" />
-        <div class="field-error"
+        <!-- CSRF-Hidden-Field wird automatisch von Spring/Thymeleaf eingefügt,
+             wenn du th:action verwendest – wir brauchen hier KEIN eigenes -->
+
+        <!-- E-Mail -->
+        <label for="email">E-Mail:</label>
+        <input id="email" type="email" th:field="*{email}"/>
+        <div class="form-error"
              th:if="${#fields.hasErrors('email')}"
              th:errors="*{email}"></div>
 
-        <label>Passwort:</label>
-        <input type="password" th:field="*{password}" />
-        <div class="field-error"
+        <!-- Passwort -->
+        <label for="password">Passwort:</label>
+        <input id="password" type="password" th:field="*{password}"/>
+        <div class="form-error"
              th:if="${#fields.hasErrors('password')}"
              th:errors="*{password}"></div>
 
-        <label>Passwort wiederholen:</label>
-        <input type="password" th:field="*{passwordRepeat}" />
-        <div class="field-error"
+        <!-- Passwort wiederholen -->
+        <label for="passwordRepeat">Passwort wiederholen:</label>
+        <input id="passwordRepeat" type="password" th:field="*{passwordRepeat}"/>
+        <div class="form-error"
              th:if="${#fields.hasErrors('passwordRepeat')}"
              th:errors="*{passwordRepeat}"></div>
 
-        <!-- reCAPTCHA Widget -->
-        <div class="g-recaptcha"
-             th:if="${@recaptchaProperties.enabled}"
-             th:attr="data-sitekey=${@recaptchaProperties.siteKey}">
+        <!-- reCAPTCHA -->
+        <div th:if="${@recaptchaProperties.enabled}">
+            <div class="g-recaptcha"
+                 th:attr="data-sitekey=${@recaptchaProperties.siteKey}">
+            </div>
         </div>
 
-        <button type="submit">Registrieren</button>
+        <!-- Globale Fehler (z.B. captcha.invalid, E-Mail-Verifikationsfehler usw.) -->
+        <div class="form-error global"
+             th:if="${#fields.hasGlobalErrors()}"
+             th:each="err : ${#fields.globalErrors()}">
+            <p th:text="${err}"></p>
+        </div>
+
+        <button type="submit" class="btn primary">Registrieren</button>
     </form>
 </main>
 
 <footer th:replace="~{layout :: footer}"></footer>
+
+<!-- Google reCAPTCHA Script nur laden, wenn aktiviert -->
+<script th:if="${@recaptchaProperties.enabled}"
+        src="https://www.google.com/recaptcha/api.js"
+        async defer></script>
+
 </body>
 </html>

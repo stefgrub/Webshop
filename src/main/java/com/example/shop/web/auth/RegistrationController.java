@@ -1,9 +1,10 @@
 package com.example.shop.web.auth;
 
+import com.example.shop.config.RecaptchaProperties;
 import com.example.shop.domain.User;
 import com.example.shop.repo.UserRepo;
 import com.example.shop.service.EmailVerificationService;
-import com.example.shop.service.RecaptchaService;   // ⬅️ WICHTIG: import
+import com.example.shop.service.RecaptchaService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -23,16 +24,19 @@ public class RegistrationController {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final EmailVerificationService emailVerificationService;
-    private final RecaptchaService recaptchaService;   // ⬅️ neu
+    private final RecaptchaService recaptchaService;
+    private final RecaptchaProperties recaptchaProperties;
 
     public RegistrationController(UserRepo userRepo,
                                   PasswordEncoder passwordEncoder,
                                   EmailVerificationService emailVerificationService,
-                                  RecaptchaService recaptchaService) {   // ⬅️ neu
+                                  RecaptchaService recaptchaService,
+                                  RecaptchaProperties recaptchaProperties) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
         this.emailVerificationService = emailVerificationService;
-        this.recaptchaService = recaptchaService;      // ⬅️ neu
+        this.recaptchaService = recaptchaService;
+        this.recaptchaProperties = recaptchaProperties;
     }
 
     // ---------- DTO für das Formular ----------
@@ -48,11 +52,12 @@ public class RegistrationController {
         @NotBlank
         private String passwordRepeat;
 
-        // Getter/Setter
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
+
         public String getPassword() { return password; }
         public void setPassword(String password) { this.password = password; }
+
         public String getPasswordRepeat() { return passwordRepeat; }
         public void setPasswordRepeat(String passwordRepeat) { this.passwordRepeat = passwordRepeat; }
     }
@@ -75,9 +80,13 @@ public class RegistrationController {
                                  Model model) {
 
         String ip = request.getRemoteAddr();
-        if (!recaptchaService.isCaptchaValid(recaptchaResponse, ip)) {
-            // globale Fehlermeldung (kein Feld, sondern Formular-weit)
-            binding.reject("captcha.invalid", "Bitte bestätige, dass du kein Roboter bist.");
+
+        // reCAPTCHA nur prüfen, wenn aktiviert
+        if (recaptchaProperties.isEnabled()) {
+            boolean captchaOk = recaptchaService.isCaptchaValid(recaptchaResponse, ip);
+            if (!captchaOk) {
+                binding.reject("captcha.invalid", "Bitte bestätige, dass du kein Roboter bist.");
+            }
         }
 
         // Passwort-Wiederholung prüfen
@@ -96,15 +105,20 @@ public class RegistrationController {
         if (existingOpt.isPresent()) {
             User existing = existingOpt.get();
             if (existing.isEmailVerified()) {
-                // Schon registriert & verifiziert
                 binding.rejectValue("email", "email.in.use", "Diese E-Mail-Adresse ist bereits registriert.");
                 return "register";
             } else {
-                // Account existiert, aber noch nicht verifiziert → neuen Code schicken
-                emailVerificationService.sendCode(existing);
-                model.addAttribute("email", existing.getEmail());
-                model.addAttribute("info", "Wir haben dir einen neuen Bestätigungscode geschickt.");
-                return "auth/verify";
+                // Account existiert, aber noch nicht verifiziert → neuen Code schicken (mit Rate-Limit in EmailVerificationService)
+                try {
+                    emailVerificationService.sendCode(existing);
+                    model.addAttribute("email", existing.getEmail());
+                    model.addAttribute("info", "Wir haben dir einen neuen Bestätigungscode geschickt.");
+                    return "auth/verify";
+                } catch (IllegalStateException ex) {
+                    // z.B. zu viele Versuche / Rate-Limit
+                    binding.reject("emailVerification", ex.getMessage());
+                    return "register";
+                }
             }
         }
 
@@ -112,12 +126,23 @@ public class RegistrationController {
         User user = new User();
         user.setEmail(email);
         user.setPasswordHash(passwordEncoder.encode(form.getPassword()));
+        user.setRole("USER");
         user.setEmailVerified(false);
-
+        user.setVerificationCodeHash(null);
+        user.setVerificationExpires(null);
+        user.setVerificationAttempts(0);
+        user.setLastCodeSent(null);
         user = userRepo.save(user);
 
-        // 6-stelligen Code generieren & per Mail senden (mit Rate-Limit)
-        emailVerificationService.sendCode(user);
+
+        try {
+            // 6-stelligen Code generieren & per Mail senden (mit Rate-Limit in EmailVerificationService)
+            emailVerificationService.sendCode(user);
+        } catch (IllegalStateException ex) {
+            // Mail / Code-Versand schlägt fehl → nicht 500, sondern sauber auf der Seite anzeigen
+            binding.reject("emailVerification", ex.getMessage());
+            return "register";
+        }
 
         model.addAttribute("email", user.getEmail());
         return "auth/verify";

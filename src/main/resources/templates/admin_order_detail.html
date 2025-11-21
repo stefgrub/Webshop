@@ -17,13 +17,11 @@
 
         <h2>Status</h2>
         <form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
-            <label>
-                <select name="status">
-                    <option th:each="s : ${T(com.example.shop.domain.Order.Status).values()}"
-                            th:value="${s}" th:text="${s}"
-                            th:selected="${order.status == s}"></option>
-                </select>
-            </label>
+            <select name="status">
+                <option th:each="s : ${T(com.example.shop.domain.Order.Status).values()}"
+                        th:value="${s}" th:text="${s}"
+                        th:selected="${order.status == s}"></option>
+            </select>
             <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
             <button type="submit" class="btn">Aktualisieren</button>
         </form>

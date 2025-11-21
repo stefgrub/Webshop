@@ -1,5 +1,4 @@
-<!-- templates/mail/order-customer-status.html -->
-<html><body>
+<html xmlns:th="http://www.w3.org/1999/xhtml" lang="de"><body>
 <p>Hallo <b th:text="${order.fullName}">Kunde</b>,</p>
 <p>der Status deiner Bestellung <b>#<span th:text="${order.id}">1</span></b> hat sich geändert:
     <b th:text="${order.status}">NEW</b>.

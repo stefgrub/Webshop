@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="de" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
 <head th:fragment="head(title)" th:inline="none">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -34,9 +33,7 @@
 
     <!-- Announcements -->
     <section th:if="${announcements != null}">
-        <div th:each="a : ${announcements}"
-             class="alert"
-             th:classappend="' ' + ${a.levelCss()}">
+        <div th:each="a : ${announcements}" class="alert" th:classappend="' ' + ${a.levelCss()}">
             <strong th:text="${a.title}">Titel</strong>
             <span th:utext="${a.message}">Nachricht</span>
             <a th:if="${a.linkUrl}" th:href="${a.linkUrl}" class="btn small">Mehr</a>

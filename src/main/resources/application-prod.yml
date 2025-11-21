@@ -65,7 +65,7 @@ recaptcha:
 app:
   mail:
     from:
-      address: ${MAIL_FROM_ADDRESS:noreply@viewwebshop.at}
+      address: ${MAIL_FROM_ADDRESS:support@viewwebshop.at}
       name: ${MAIL_FROM_NAME:ViewWebshop}
 
 webshop:
